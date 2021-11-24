@@ -56,9 +56,9 @@ public class User {
   @JoinColumn(name = "department_id")
   private Department department;
 
-  @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-  @Exclude
-  private List<Project> projects;
+//  @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+//  @Exclude
+//  private List<Project> projects;
 
   @Override
   public boolean equals(Object o) {

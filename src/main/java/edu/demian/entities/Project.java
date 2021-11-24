@@ -44,12 +44,12 @@ public class Project {
   @Column(name = "description")
   private String description;
 
-  @ManyToMany
-  @JoinTable(name = "users_projects",
-    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)},
-    inverseJoinColumns = {@JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)})
-  @Exclude
-  private List<User> users;
+//  @ManyToMany
+//  @JoinTable(name = "users_projects",
+//    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)},
+//    inverseJoinColumns = {@JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)})
+//  @Exclude
+//  private List<User> users;
 
   @Override
   public boolean equals(Object o) {
