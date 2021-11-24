@@ -3,6 +3,7 @@ package edu.demian.entities;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ import lombok.ToString.Exclude;
 import org.hibernate.Hibernate;
 
 @Entity
-@Table(name = "user")
+@Table(name = "usr")
 @Getter
 @Setter
 @ToString
@@ -56,9 +58,8 @@ public class User {
   @JoinColumn(name = "department_id")
   private Department department;
 
-//  @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-//  @Exclude
-//  private List<Project> projects;
+  @OneToMany(mappedBy = "user")
+  private List<Project> projects;
 
   @Override
   public boolean equals(Object o) {

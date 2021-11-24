@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
@@ -44,12 +46,8 @@ public class Project {
   @Column(name = "description")
   private String description;
 
-//  @ManyToMany
-//  @JoinTable(name = "users_projects",
-//    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)},
-//    inverseJoinColumns = {@JoinColumn(name = "project_id", referencedColumnName = "project_id", nullable = false)})
-//  @Exclude
-//  private List<User> users;
+  @OneToMany(mappedBy = "project")
+  private List<User> users;
 
   @Override
   public boolean equals(Object o) {
