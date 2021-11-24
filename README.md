@@ -1,2 +1,2 @@
-# employees-workload-sevice
-Spring core project to keep track of employees and their workload by department. 
+# employees-workload-service
+Spring core application to keep track of employees and their workload by department
