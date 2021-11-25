@@ -1,6 +1,5 @@
 package edu.demian.entities;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -10,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -18,11 +16,11 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 @Entity
+@Table(name = "user_project")
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table(name = "user_project")
 public class UserProject {
 
   @EmbeddedId
@@ -44,7 +42,7 @@ public class UserProject {
   @Column(name = "position_start_date", nullable = false)
   private LocalDate positionStartDate;
 
-  @Column(name = "position_end_date")
+  @Column(name = "position_end_date", nullable = false)
   private LocalDate positionEndDate;
 
   @Override

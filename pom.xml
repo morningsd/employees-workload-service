@@ -16,22 +16,20 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <spring.version>5.3.13</spring.version>
+    <jackson.version>2.13.0</jackson.version>
+    <spring.data.version>2.6.0</spring.data.version>
+    <hibernate.version>5.6.1.Final</hibernate.version>
+    <javax.validation.version>2.0.1.Final</javax.validation.version>
+    <hibernate.validator.version>7.0.1.Final</hibernate.validator.version>
+    <postgresql.version>42.3.1</postgresql.version>
+    <poi.ooxml.version>5.1.0</poi.ooxml.version>
+    <opencsv.version>5.5.2</opencsv.version>
+    <lombok.version>1.18.22</lombok.version>
+    <javax.servlet.version>4.0.1</javax.servlet.version>
+    <junit.version>5.8.1</junit.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>5.8.1</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -70,90 +68,96 @@
     </dependency>
 
     <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
-      <version>2.6.0</version>
+      <version>${spring.data.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
-      <version>5.6.1.Final</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>5.6.1.Final</version>
+      <version>${hibernate.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>7.0.1.Final</version>
+      <version>${hibernate.validator.version}</version>
     </dependency>
 
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
+      <version>${javax.validation.version}</version>
     </dependency>
-
 
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>5.1.0</version>
+      <version>${poi.ooxml.version}</version>
     </dependency>
 
     <dependency>
       <groupId>com.opencsv</groupId>
       <artifactId>opencsv</artifactId>
-      <version>5.5.2</version>
+      <version>${opencsv.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
-      <version>42.3.1</version>
+      <version>${postgresql.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.22</version>
+      <version>${lombok.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
+      <version>${javax.servlet.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+<!--  ##############  TEST ############# -->
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
 
   <build>
     <finalName>employees-workload-service</finalName>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+    <pluginManagement>
       <plugins>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
-        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
@@ -162,10 +166,6 @@
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
         </plugin>
       </plugins>
     </pluginManagement>

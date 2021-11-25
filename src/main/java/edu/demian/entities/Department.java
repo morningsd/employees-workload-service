@@ -1,9 +1,7 @@
 package edu.demian.entities;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,22 +26,17 @@ public class Department {
 
   @Id
   @GeneratedValue
-  @Column(name = "department_id")
   private UUID id;
 
-  @Column(name = "name", unique = true)
-  @Size(max = 255)
-  @NotBlank
+  @Column(name = "name", unique = true, nullable = false)
   private String name;
 
-  @Column(name = "description")
-  @Size(max = 1024)
-  @NotBlank
+  @Column(name = "description", length = 1024, nullable = false)
   private String description;
 
   @OneToMany(mappedBy = "department")
   @Exclude
-  private List<User> users;
+  private Set<User> users;
 
   @Override
   public boolean equals(Object o) {

@@ -26,11 +26,15 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = "edu.demian.repositories")
 public class JpaConfig {
 
-  @Autowired private Environment env;
+  private final Environment env;
+
+  public JpaConfig(Environment env) {
+    this.env = env;
+  }
 
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-    final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
+    LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
         new LocalContainerEntityManagerFactoryBean();
     entityManagerFactoryBean.setDataSource(dataSource());
     entityManagerFactoryBean.setPackagesToScan("edu.demian.entities");
@@ -62,8 +66,8 @@ public class JpaConfig {
   }
 
   @Bean
-  public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
-    final JpaTransactionManager transactionManager = new JpaTransactionManager();
+  public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+    JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(emf);
     return transactionManager;
   }

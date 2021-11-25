@@ -1,6 +1,6 @@
 package edu.demian.repositories;
 
-import edu.demian.entities.User;
+import edu.demian.entities.Project;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,13 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, UUID> {
+public interface ProjectRepository extends JpaRepository<Project, UUID> {
 
-  Optional<User> findByEmail(String email);
+  Optional<Project> findByName(String name);
 
   @Query(
       value =
-          "SELECT * FROM usr u JOIN user_project up ON u.id = up.user_id WHERE up.project_id = ?1",
+          "SELECT * FROM project p JOIN user_project up ON p.id = up.project_id WHERE up.user_id = ?1",
       nativeQuery = true)
-  List<User> findUsersByUserProjectsProjectId(UUID projectId);
+  List<Project> findProjectsByUserProjectsUserId(UUID userId);
 }

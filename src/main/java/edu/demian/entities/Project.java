@@ -1,21 +1,15 @@
 package edu.demian.entities;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -33,21 +27,17 @@ public class Project {
 
   @Id
   @GeneratedValue
-  @Column(name = "project_id")
   private UUID id;
 
-  @NotBlank
-  @Size(max = 255)
-  @Column(name = "name")
+  @Column(name = "name", unique = true, nullable = false)
   private String name;
 
-  @NotBlank
-  @Size(max = 1024)
-  @Column(name = "description")
+  @Column(name = "description", length = 1024, nullable = false)
   private String description;
 
-  @OneToMany(mappedBy = "project")
-  private List<User> users;
+  @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+  @Exclude
+  private List<UserProject> users;
 
   @Override
   public boolean equals(Object o) {
