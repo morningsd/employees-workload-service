@@ -1,5 +1,6 @@
 package edu.demian.controllers;
 
+import edu.demian.entities.Project;
 import edu.demian.entities.User;
 import edu.demian.services.UserService;
 import java.util.List;
@@ -29,6 +30,9 @@ public class UserController {
     return userService.save(user);
   }
 
-
+  @PostMapping("/add-project")
+  public void addProject(@RequestBody Project project) {
+    
+  }
 
 }
