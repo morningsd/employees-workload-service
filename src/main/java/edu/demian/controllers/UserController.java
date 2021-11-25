@@ -1,11 +1,14 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.User;
+import edu.demian.exceptions.ServiceException;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,39 +33,43 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  public User findById(@PathVariable UUID id) {
-    // TODO think about return type if not found
-    return userService.findById(id).orElse(null);
+  public ResponseEntity<User> findById(@PathVariable UUID id) {
+    User user = userService.findById(id).orElseThrow(() -> {
+      throw new ServiceException("No user with given id was found");
+    });
+    return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
   @GetMapping
-  public List<User> findAll() {
-    return userService.findAll();
+  public ResponseEntity<List<User>> findAll() {
+    return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
   }
 
   @PostMapping
-  public User register(@RequestBody User user, @RequestBody UUID departmentId) {
-    return userService.save(user, departmentId);
+  public ResponseEntity<User> register(@RequestBody User user, @RequestBody UUID departmentId) {
+    return new ResponseEntity<>(userService.save(user, departmentId), HttpStatus.OK);
   }
 
   @PostMapping("/add-project")
-  public void addProject(@RequestBody UUID userId, @RequestBody UUID projectId) {
+  public ResponseEntity<?> addProject(@RequestBody UUID userId, @RequestBody UUID projectId) {
     userProjectService.addProjectToUser(userId, projectId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PutMapping("/{id}")
-  public User replaceUser(@RequestBody User user, @PathVariable UUID id) {
-    return userService.replace(user, id);
+  public ResponseEntity<User> replaceUser(@RequestBody User user, @PathVariable UUID id) {
+    return new ResponseEntity<>(userService.replace(user, id), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public User partialReplaceUser(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
-    return userService.partialReplace(partialUpdates, id);
+  public ResponseEntity<User> partialReplaceUser(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+    return new ResponseEntity<>(userService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable UUID id) {
+  public ResponseEntity<?> delete(@PathVariable UUID id) {
     userService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 }
