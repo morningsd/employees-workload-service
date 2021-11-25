@@ -27,6 +27,7 @@
     <lombok.version>1.18.22</lombok.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
     <junit.version>5.8.1</junit.version>
+    <mockito.version>4.1.0</mockito.version>
   </properties>
 
   <dependencies>
@@ -145,6 +146,14 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <build>
@@ -158,6 +167,11 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.8.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0-M5</version>
         </plugin>
         <plugin>
           <artifactId>maven-war-plugin</artifactId>

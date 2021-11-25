@@ -21,9 +21,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   public Department save(Department department) {
-    departmentRepository.findByName(department.getName()).ifPresent(departmentFromDb -> {
-      throw new ServiceException("Department: " + departmentFromDb.getName() + " already exists");
-    });
+    departmentRepository
+        .findByName(department.getName())
+        .ifPresent(
+            departmentFromDb -> {
+              throw new ServiceException(
+                  "Department: " + departmentFromDb.getName() + " already exists");
+            });
     return departmentRepository.save(department);
   }
 
@@ -54,7 +58,8 @@ public class DepartmentServiceImpl implements DepartmentService {
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException("Can't update department (no existing department with such id)");
+              throw new ServiceException(
+                  "Can't update department (no existing department with such id)");
             });
   }
 
@@ -81,7 +86,8 @@ public class DepartmentServiceImpl implements DepartmentService {
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException("Can't update department (no existing department with such id)");
+              throw new ServiceException(
+                  "Can't update department (no existing department with such id)");
             });
   }
 
