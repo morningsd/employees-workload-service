@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,7 +23,9 @@ import org.hibernate.Hibernate;
 @Table(name = "project")
 @Getter
 @Setter
+@Builder
 @ToString
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class Project {
 
