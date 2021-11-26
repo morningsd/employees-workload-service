@@ -26,18 +26,17 @@ public class ProjectController {
   private final ProjectService projectService;
   private final UserProjectService userProjectService;
 
-
-  public ProjectController(ProjectService projectService,
-      UserProjectService userProjectService) {
+  public ProjectController(ProjectService projectService, UserProjectService userProjectService) {
     this.projectService = projectService;
     this.userProjectService = userProjectService;
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<Project> findById(@PathVariable UUID id) {
-    Project project = projectService.findById(id).orElseThrow(() -> {
-      throw new ServiceException("No user with given id was found");
-    });
+    Project project =
+        projectService
+            .findById(id)
+            .orElseThrow(() -> new ServiceException("No user with given id was found"));
     return new ResponseEntity<>(project, HttpStatus.OK);
   }
 
@@ -53,9 +52,10 @@ public class ProjectController {
 
   @GetMapping("/{name}")
   public ResponseEntity<Project> findByName(@PathVariable String name) {
-    Project project = projectService.findByName(name).orElseThrow(() -> {
-      throw new ServiceException("No project with given name was found");
-    });
+    Project project =
+        projectService
+            .findByName(name)
+            .orElseThrow(() -> new ServiceException("No project with given name was found"));
     return new ResponseEntity<>(project, HttpStatus.OK);
   }
 
@@ -66,12 +66,14 @@ public class ProjectController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Project> replaceProject(@RequestBody Project project, @PathVariable UUID id) {
+  public ResponseEntity<Project> replaceProject(
+      @RequestBody Project project, @PathVariable UUID id) {
     return new ResponseEntity<>(projectService.replace(project, id), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Project> partialReplaceProject(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+  public ResponseEntity<Project> partialReplaceProject(
+      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(projectService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 
@@ -80,5 +82,4 @@ public class ProjectController {
     projectService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
 }

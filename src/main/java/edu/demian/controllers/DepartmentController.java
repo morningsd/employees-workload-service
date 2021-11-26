@@ -30,9 +30,10 @@ public class DepartmentController {
 
   @GetMapping("/{id}")
   public ResponseEntity<Department> findById(@PathVariable UUID id) {
-    Department department = departmentService.findById(id).orElseThrow(() -> {
-      throw new ServiceException("No department with given id was found");
-    });
+    Department department =
+        departmentService
+            .findById(id)
+            .orElseThrow(() -> new ServiceException("No department with given id was found"));
     return new ResponseEntity<>(department, HttpStatus.OK);
   }
 
@@ -47,13 +48,16 @@ public class DepartmentController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Department> replaceDepartment(@RequestBody Department department, @PathVariable UUID id) {
+  public ResponseEntity<Department> replaceDepartment(
+      @RequestBody Department department, @PathVariable UUID id) {
     return new ResponseEntity<>(departmentService.replace(department, id), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Department> partialReplaceDepartment(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
-    return new ResponseEntity<>(departmentService.partialReplace(partialUpdates, id), HttpStatus.OK);
+  public ResponseEntity<Department> partialReplaceDepartment(
+      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+    return new ResponseEntity<>(
+        departmentService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
@@ -61,5 +65,4 @@ public class DepartmentController {
     departmentService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
 }

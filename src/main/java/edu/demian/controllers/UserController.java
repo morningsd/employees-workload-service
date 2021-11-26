@@ -26,17 +26,17 @@ public class UserController {
   private final UserService userService;
   private final UserProjectService userProjectService;
 
-  public UserController(UserService userService,
-      UserProjectService userProjectService) {
+  public UserController(UserService userService, UserProjectService userProjectService) {
     this.userService = userService;
     this.userProjectService = userProjectService;
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<User> findById(@PathVariable UUID id) {
-    User user = userService.findById(id).orElseThrow(() -> {
-      throw new ServiceException("No user with given id was found");
-    });
+    User user =
+        userService
+            .findById(id)
+            .orElseThrow(() -> new ServiceException("No user with given id was found"));
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
@@ -62,7 +62,8 @@ public class UserController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<User> partialReplaceUser(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+  public ResponseEntity<User> partialReplaceUser(
+      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(userService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 
@@ -71,5 +72,4 @@ public class UserController {
     userService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
 }
