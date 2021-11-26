@@ -3,7 +3,6 @@ package edu.demian.services.impl;
 import edu.demian.entities.Project;
 import edu.demian.entities.User;
 import edu.demian.entities.UserProject;
-import edu.demian.exceptions.ServiceException;
 import edu.demian.repositories.UserProjectRepository;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
@@ -18,8 +17,10 @@ public class UserProjectServiceImpl implements UserProjectService {
   private final UserService userService;
   private final ProjectService projectService;
 
-  public UserProjectServiceImpl(UserProjectRepository userProjectRepository,
-      UserService userService, ProjectService projectService) {
+  public UserProjectServiceImpl(
+      UserProjectRepository userProjectRepository,
+      UserService userService,
+      ProjectService projectService) {
     this.userProjectRepository = userProjectRepository;
     this.userService = userService;
     this.projectService = projectService;
@@ -32,20 +33,9 @@ public class UserProjectServiceImpl implements UserProjectService {
 
   @Override
   public void addProjectToUser(UUID userId, UUID projectId) {
-    User user =
-        userService
-            .findById(userId)
-            .orElseThrow(
-                () -> {
-                  throw new ServiceException("No such user found");
-                });
-    Project project =
-        projectService
-            .findById(projectId)
-            .orElseThrow(
-                () -> {
-                  throw new ServiceException("No such project found");
-                });
+    User user = userService.findById(userId);
+    Project project = projectService.findById(projectId);
+
     UserProject userProject = new UserProject();
     userProject.setUser(user);
     userProject.setProject(project);

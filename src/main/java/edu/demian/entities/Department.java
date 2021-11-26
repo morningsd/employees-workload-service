@@ -1,5 +1,6 @@
 package edu.demian.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -39,6 +40,7 @@ public class Department {
   private String description;
 
   @OneToMany(mappedBy = "department")
+  @JsonIgnore
   @Exclude
   private Set<User> users;
 

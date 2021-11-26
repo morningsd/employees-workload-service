@@ -1,7 +1,9 @@
 package edu.demian.services.impl;
 
 import edu.demian.entities.Department;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceAlreadyExistsException;
+import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
+import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.DepartmentRepository;
 import edu.demian.services.DepartmentService;
 import java.util.List;
@@ -25,15 +27,15 @@ public class DepartmentServiceImpl implements DepartmentService {
         .findByName(department.getName())
         .ifPresent(
             departmentFromDb -> {
-              throw new ServiceException(
+              throw new ResourceAlreadyExistsException(
                   "Department: " + departmentFromDb.getName() + " already exists");
             });
     return departmentRepository.save(department);
   }
 
   @Override
-  public Optional<Department> findByName(String name) {
-    return departmentRepository.findByName(name);
+  public Department findByName(String name) {
+    return departmentRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("No department with name: " + name + " was found"));
   }
 
   @Override
@@ -42,8 +44,11 @@ public class DepartmentServiceImpl implements DepartmentService {
   }
 
   @Override
-  public Optional<Department> findById(UUID id) {
-    return departmentRepository.findById(id);
+  public Department findById(UUID id) {
+    return departmentRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("No department with id: " + id + " was found"));
   }
 
   @Override
@@ -58,8 +63,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException(
-                  "Can't update department (no existing department with such id)");
+              throw new ResourceNotFoundException("No department with id: " + id + " was found");
             });
   }
 
@@ -79,15 +83,15 @@ public class DepartmentServiceImpl implements DepartmentService {
                         department.setDescription((String) value);
                         break;
                       default:
-                        throw new ServiceException("Department has no field " + value);
+                        throw new ResourceHasNoSuchPropertyException(
+                            "Department has no field " + value);
                     }
                   });
               return departmentRepository.save(department);
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException(
-                  "Can't update department (no existing department with such id)");
+              throw new ResourceNotFoundException("No department with id: " + " was found");
             });
   }
 

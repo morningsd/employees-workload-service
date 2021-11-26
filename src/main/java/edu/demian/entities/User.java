@@ -1,5 +1,6 @@
 package edu.demian.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -55,6 +56,7 @@ public class User {
   private Department department;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+  @JsonIgnore
   @Exclude
   private List<UserProject> projects;
 

@@ -1,5 +1,6 @@
 package edu.demian.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class Project {
   private String description;
 
   @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+  @JsonIgnore
   @Exclude
   private List<UserProject> users;
 

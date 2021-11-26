@@ -12,7 +12,7 @@ public interface UserService {
 
   List<User> findAll();
 
-  Optional<User> findById(UUID id);
+  User findById(UUID id);
 
   User replace(User user, UUID id);
 

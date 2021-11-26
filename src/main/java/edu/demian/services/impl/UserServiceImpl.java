@@ -1,13 +1,14 @@
 package edu.demian.services.impl;
 
 import edu.demian.entities.User;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceAlreadyExistsException;
+import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
+import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.UserRepository;
 import edu.demian.services.DepartmentService;
 import edu.demian.services.UserService;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class UserServiceImpl implements UserService {
         .findByEmail(user.getEmail())
         .ifPresent(
             userFromDb -> {
-              throw new ServiceException(
+              throw new ResourceAlreadyExistsException(
                   "User with this email: " + userFromDb.getEmail() + " already exists");
             });
     departmentService
@@ -36,7 +37,8 @@ public class UserServiceImpl implements UserService {
         .ifPresentOrElse(
             user::setDepartment,
             () -> {
-              throw new ServiceException("No such department found");
+              throw new ResourceNotFoundException(
+                  "No department with id: " + departmentId + " was found");
             });
     return userRepository.save(user);
   }
@@ -47,8 +49,10 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public Optional<User> findById(UUID id) {
-    return userRepository.findById(id);
+  public User findById(UUID id) {
+    return userRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("No user with id: " + id + " was found"));
   }
 
   @Override
@@ -65,7 +69,7 @@ public class UserServiceImpl implements UserService {
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException("Can't update user (no existing user with such id)");
+              throw new ResourceNotFoundException("No user with id: " + id + " was found");
             });
   }
 
@@ -91,14 +95,14 @@ public class UserServiceImpl implements UserService {
                         user.setPassword((String) value);
                         break;
                       default:
-                        throw new ServiceException("User has no field " + value);
+                        throw new ResourceHasNoSuchPropertyException("User has no field " + value);
                     }
                   });
               return userRepository.save(user);
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException("Can't update user (no existing user with such id)");
+              throw new ResourceNotFoundException("No user with id: " + id + " was found");
             });
   }
 

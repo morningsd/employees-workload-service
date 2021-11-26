@@ -10,11 +10,11 @@ public interface DepartmentService {
 
   Department save(Department department);
 
-  Optional<Department> findByName(String name);
+  Department findByName(String name);
 
   List<Department> findAll();
 
-  Optional<Department> findById(UUID id);
+  Department findById(UUID id);
 
   Department replace(Department department, UUID id);
 
