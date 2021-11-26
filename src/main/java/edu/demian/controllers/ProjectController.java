@@ -1,7 +1,6 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.Project;
-import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
 import java.util.List;
@@ -48,7 +47,7 @@ public class ProjectController {
     return new ResponseEntity<>(projectService.save(project), HttpStatus.OK);
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/name={name}")
   public ResponseEntity<Project> findByName(@PathVariable String name) {
     return new ResponseEntity<>(projectService.findByName(name), HttpStatus.OK);
   }

@@ -1,9 +1,10 @@
 package edu.demian.controllers;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -19,7 +20,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,48 +54,48 @@ public class DepartmentControllerTest {
   }
 
   @Test
-  final void testFindAll_DataGiven_AllIsOk() throws Exception {
+  final void testFindAll_DataGiven_ReturnObjects() throws Exception {
     List<Department> departments =
         Arrays.asList(
-            Department.builder().name("department1").description("description1").build(),
-            Department.builder().name("department2").description("description2").build());
+            Department.builder().name("department_name1").description("department_description1").build(),
+            Department.builder().name("department_name2").description("department_description2").build());
 
     when(departmentService.findAll()).thenReturn(departments);
     mockMvc
         .perform(MockMvcRequestBuilders.get("/departments"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$[0].name", is("department1")))
-        .andExpect(jsonPath("$[1].description", is("description2")));
+        .andExpect(jsonPath("$[0].name", is("department_name1")))
+        .andExpect(jsonPath("$[1].description", is("department_description2")));
     verify(departmentService, times(1)).findAll();
     verifyNoMoreInteractions(departmentService);
   }
 
   @Test
-  final void testFindById_InstanceExists_AllIsOk() throws Exception {
+  final void testFindById_InstanceExists_ReturnObjects() throws Exception {
     UUID uuid = UUID.randomUUID();
     Department department =
-        Department.builder().id(uuid).name("departmentWithId").description("description").build();
-    when(departmentService.findById(uuid)).thenReturn(Optional.ofNullable(department));
+        Department.builder().id(uuid).name("department_name").description("department_description").build();
+    when(departmentService.findById(uuid)).thenReturn(department);
 
     mockMvc
         .perform(MockMvcRequestBuilders.get("/departments/{id}", department.getId()))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name", is("departmentWithId")))
-        .andExpect(jsonPath("$.description", is("description")));
+        .andExpect(jsonPath("$.name", is("department_name")))
+        .andExpect(jsonPath("$.description", is("department_description")));
     verify(departmentService, times(1)).findById(uuid);
     verifyNoMoreInteractions(departmentService);
   }
 
   @Test
-  final void testReplaceDepartment_InstanceExists_AllIsOk() throws Exception {
+  final void testReplaceDepartment_InstanceExists_ReturnUpdatedObject() throws Exception {
     UUID uuid = UUID.randomUUID();
     Department department =
         Department.builder()
             .id(uuid)
-            .name("nameToReplace")
-            .description("descriptionToReplace")
+            .name("department_name")
+            .description("department_description")
             .build();
     when(departmentService.replace(department, uuid)).thenReturn(department);
 
@@ -109,7 +109,7 @@ public class DepartmentControllerTest {
   }
 
   @Test
-  final void testPartialReplaceDepartment_InstanceExists_AllIsOk() throws Exception {
+  final void testPartialReplaceDepartment_InstanceExists_ReturnPartlyUpdatedObject() throws Exception {
     UUID uuid = UUID.randomUUID();
     Department department =
         Department.builder()
@@ -130,7 +130,7 @@ public class DepartmentControllerTest {
   }
 
   @Test
-  final void testDelete_InstanceExists_AllIsOk() throws Exception {
+  final void testDelete_InstanceExists_ReturnNothing() throws Exception {
     UUID uuid = UUID.randomUUID();
     Department department =
         Department.builder()
@@ -146,7 +146,7 @@ public class DepartmentControllerTest {
     verify(departmentService, times(1)).delete(department.getId());
   }
 
-  private static String asJsonString(Object obj) {
+  static String asJsonString(Object obj) {
     try {
       return new ObjectMapper().writeValueAsString(obj);
     } catch (JsonProcessingException e) {

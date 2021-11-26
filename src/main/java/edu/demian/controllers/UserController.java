@@ -1,7 +1,6 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.User;
-import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;

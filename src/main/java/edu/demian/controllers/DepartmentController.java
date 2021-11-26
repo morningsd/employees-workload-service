@@ -1,7 +1,6 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.Department;
-import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.DepartmentService;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class DepartmentController {
     return new ResponseEntity<>(departmentService.findById(id), HttpStatus.OK);
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/name={name}")
   public ResponseEntity<Department> findByName(@PathVariable String name) {
     return new ResponseEntity<>(departmentService.findByName(name), HttpStatus.OK);
   }

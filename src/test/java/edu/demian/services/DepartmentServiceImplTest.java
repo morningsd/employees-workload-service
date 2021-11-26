@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import edu.demian.entities.Department;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceAlreadyExistsException;
 import edu.demian.repositories.DepartmentRepository;
 import edu.demian.services.impl.DepartmentServiceImpl;
 import java.util.HashMap;
@@ -45,10 +45,10 @@ public class DepartmentServiceImplTest {
 
   @Test
   final void testSave_DepartmentIsAlreadyExists_ExceptionThrown() {
-    when(departmentRepository.findByName(anyString())).thenReturn(java.util.Optional.of(stub));
+    when(departmentRepository.findByName(anyString())).thenReturn(Optional.of(stub));
 
     assertThrows(
-        ServiceException.class,
+        ResourceAlreadyExistsException.class,
         () -> departmentService.save(stub),
         "There shouldn't be 2 equal department objects");
   }
