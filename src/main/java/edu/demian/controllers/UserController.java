@@ -1,7 +1,7 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.User;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
@@ -33,11 +33,7 @@ public class UserController {
 
   @GetMapping("/{id}")
   public ResponseEntity<User> findById(@PathVariable UUID id) {
-    User user =
-        userService
-            .findById(id)
-            .orElseThrow(() -> new ServiceException("No user with given id was found"));
-    return new ResponseEntity<>(user, HttpStatus.OK);
+    return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
   }
 
   @GetMapping

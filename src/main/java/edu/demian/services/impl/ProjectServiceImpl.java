@@ -2,7 +2,9 @@ package edu.demian.services.impl;
 
 import edu.demian.entities.Project;
 import edu.demian.entities.User;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceAlreadyExistsException;
+import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
+import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.ProjectRepository;
 import edu.demian.services.ProjectService;
 import java.util.List;
@@ -22,15 +24,22 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   public Project save(Project project) {
-    projectRepository.findByName(project.getName()).ifPresent(projectFromDb -> {
-      throw new ServiceException("Project: " + projectFromDb.getName() + " already exists");
-    });
+    projectRepository
+        .findByName(project.getName())
+        .ifPresent(
+            projectFromDb -> {
+              throw new ResourceAlreadyExistsException(
+                  "Project: " + projectFromDb.getName() + " already exists");
+            });
     return projectRepository.save(project);
   }
 
   @Override
-  public Optional<Project> findByName(String name) {
-    return projectRepository.findByName(name);
+  public Project findByName(String name) {
+    return projectRepository
+        .findByName(name)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("No project with name: " + name + " was found"));
   }
 
   @Override
@@ -44,8 +53,10 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public Optional<Project> findById(UUID id) {
-    return projectRepository.findById(id);
+  public Project findById(UUID id) {
+    return projectRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("No user with id: " + " was found"));
   }
 
   @Override
@@ -60,7 +71,7 @@ public class ProjectServiceImpl implements ProjectService {
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException("Can't update project (no existing project with such id)");
+              throw new ResourceNotFoundException("No project with id: " + id + " was found");
             });
   }
 
@@ -80,14 +91,15 @@ public class ProjectServiceImpl implements ProjectService {
                         project.setDescription((String) value);
                         break;
                       default:
-                        throw new ServiceException("Project has no field " + value);
+                        throw new ResourceHasNoSuchPropertyException(
+                            "Project has no field " + value);
                     }
                   });
               return projectRepository.save(project);
             })
         .orElseThrow(
             () -> {
-              throw new ServiceException("Can't update project (no existing project with such id)");
+              throw new ResourceNotFoundException("No project with id: " + id + " was found");
             });
   }
 

@@ -1,7 +1,7 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.Project;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
 import java.util.List;
@@ -33,11 +33,7 @@ public class ProjectController {
 
   @GetMapping("/{id}")
   public ResponseEntity<Project> findById(@PathVariable UUID id) {
-    Project project =
-        projectService
-            .findById(id)
-            .orElseThrow(() -> new ServiceException("No user with given id was found"));
-    return new ResponseEntity<>(project, HttpStatus.OK);
+    return new ResponseEntity<>(projectService.findById(id), HttpStatus.OK);
   }
 
   @GetMapping
@@ -52,11 +48,7 @@ public class ProjectController {
 
   @GetMapping("/{name}")
   public ResponseEntity<Project> findByName(@PathVariable String name) {
-    Project project =
-        projectService
-            .findByName(name)
-            .orElseThrow(() -> new ServiceException("No project with given name was found"));
-    return new ResponseEntity<>(project, HttpStatus.OK);
+    return new ResponseEntity<>(projectService.findByName(name), HttpStatus.OK);
   }
 
   @PostMapping("/add-user")
