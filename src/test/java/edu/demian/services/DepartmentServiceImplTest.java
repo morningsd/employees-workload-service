@@ -24,13 +24,13 @@ import org.mockito.MockitoAnnotations;
 
 public class DepartmentServiceImplTest {
 
-  AutoCloseable openMocks;
+  private AutoCloseable openMocks;
 
-  @InjectMocks DepartmentServiceImpl departmentService;
+  @InjectMocks private DepartmentServiceImpl departmentService;
 
-  @Mock DepartmentRepository departmentRepository;
+  @Mock private DepartmentRepository departmentRepository;
 
-  Department stub;
+  private Department stub;
 
   @BeforeEach
   void setUp() {
