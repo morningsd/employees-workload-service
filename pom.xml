@@ -28,6 +28,7 @@
     <javax.servlet.version>4.0.1</javax.servlet.version>
     <junit.version>5.8.1</junit.version>
     <mockito.version>4.1.0</mockito.version>
+    <jayway.jsonpath.version>2.6.0</jayway.jsonpath.version>
   </properties>
 
   <dependencies>
@@ -150,6 +151,13 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path-assert</artifactId>
+      <version>${jayway.jsonpath.version}</version>
       <scope>test</scope>
     </dependency>
 
