@@ -1,11 +1,14 @@
 package edu.demian.controllers;
 
 import edu.demian.entities.Project;
+import edu.demian.exceptions.ServiceException;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,45 +34,51 @@ public class ProjectController {
   }
 
   @GetMapping("/{id}")
-  public Project findById(@PathVariable UUID id) {
-    // TODO read user controller
-    return projectService.findById(id).orElse(null);
+  public ResponseEntity<Project> findById(@PathVariable UUID id) {
+    Project project = projectService.findById(id).orElseThrow(() -> {
+      throw new ServiceException("No user with given id was found");
+    });
+    return new ResponseEntity<>(project, HttpStatus.OK);
   }
 
   @GetMapping
-  public List<Project> findAll() {
-    return projectService.findAll();
+  public ResponseEntity<List<Project>> findAll() {
+    return new ResponseEntity<>(projectService.findAll(), HttpStatus.OK);
   }
 
   @PostMapping
-  public Project save(@RequestBody Project project) {
-    return projectService.save(project);
+  public ResponseEntity<Project> save(@RequestBody Project project) {
+    return new ResponseEntity<>(projectService.save(project), HttpStatus.OK);
   }
 
   @GetMapping("/{name}")
-  public Project findByName(@PathVariable String name) {
-    // TODO think about throwing 404 status code
-    return projectService.findByName(name).orElse(null);
+  public ResponseEntity<Project> findByName(@PathVariable String name) {
+    Project project = projectService.findByName(name).orElseThrow(() -> {
+      throw new ServiceException("No project with given name was found");
+    });
+    return new ResponseEntity<>(project, HttpStatus.OK);
   }
 
   @PostMapping("/add-user")
-  public void addUser(@RequestBody UUID userId, @RequestBody UUID projectId) {
+  public ResponseEntity<?> addUser(@RequestBody UUID userId, @RequestBody UUID projectId) {
     userProjectService.addProjectToUser(userId, projectId);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PutMapping("/{id}")
-  public Project replaceProject(@RequestBody Project project, @PathVariable UUID id) {
-    return projectService.replace(project, id);
+  public ResponseEntity<Project> replaceProject(@RequestBody Project project, @PathVariable UUID id) {
+    return new ResponseEntity<>(projectService.replace(project, id), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public Project partialReplaceProject(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
-    return projectService.partialReplace(partialUpdates, id);
+  public ResponseEntity<Project> partialReplaceProject(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+    return new ResponseEntity<>(projectService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable UUID id) {
+  public ResponseEntity<?> delete(@PathVariable UUID id) {
     projectService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 }
