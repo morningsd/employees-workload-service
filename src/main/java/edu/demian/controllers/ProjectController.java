@@ -46,7 +46,7 @@ public class ProjectController {
     return new ResponseEntity<>(projectService.save(project), HttpStatus.OK);
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/name={name}")
   public ResponseEntity<Project> findByName(@PathVariable String name) {
     return new ResponseEntity<>(projectService.findByName(name), HttpStatus.OK);
   }
@@ -58,14 +58,12 @@ public class ProjectController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Project> replaceProject(
-      @RequestBody Project project, @PathVariable UUID id) {
+  public ResponseEntity<Project> replaceProject(@RequestBody Project project, @PathVariable UUID id) {
     return new ResponseEntity<>(projectService.replace(project, id), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Project> partialReplaceProject(
-      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+  public ResponseEntity<Project> partialReplaceProject(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(projectService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 

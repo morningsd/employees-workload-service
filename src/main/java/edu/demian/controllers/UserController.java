@@ -58,8 +58,7 @@ public class UserController {
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<User> partialReplaceUser(
-      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+  public ResponseEntity<User> partialReplaceUser(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(userService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 

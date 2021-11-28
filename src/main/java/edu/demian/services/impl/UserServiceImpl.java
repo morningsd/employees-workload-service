@@ -32,14 +32,8 @@ public class UserServiceImpl implements UserService {
               throw new ResourceAlreadyExistsException(
                   "User with this email: " + userFromDb.getEmail() + " already exists");
             });
-    departmentService
-        .findById(departmentId)
-        .ifPresentOrElse(
-            user::setDepartment,
-            () -> {
-              throw new ResourceNotFoundException(
-                  "No department with id: " + departmentId + " was found");
-            });
+
+    departmentService.findById(departmentId); // TODO make some check method
     return userRepository.save(user);
   }
 
@@ -72,6 +66,7 @@ public class UserServiceImpl implements UserService {
               throw new ResourceNotFoundException("No user with id: " + id + " was found");
             });
   }
+
 
   @Override
   public User partialReplace(Map<String, Object> partialUpdates, UUID id) {

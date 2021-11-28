@@ -33,7 +33,7 @@ public class DepartmentController {
     return new ResponseEntity<>(departmentService.findById(id), HttpStatus.OK);
   }
 
-  @GetMapping("/{name}")
+  @GetMapping("/name={name}")
   public ResponseEntity<Department> findByName(@PathVariable String name) {
     return new ResponseEntity<>(departmentService.findByName(name), HttpStatus.OK);
   }
@@ -49,16 +49,13 @@ public class DepartmentController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Department> replaceDepartment(
-      @RequestBody Department department, @PathVariable UUID id) {
+  public ResponseEntity<Department> replaceDepartment(@RequestBody Department department, @PathVariable UUID id) {
     return new ResponseEntity<>(departmentService.replace(department, id), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Department> partialReplaceDepartment(
-      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
-    return new ResponseEntity<>(
-        departmentService.partialReplace(partialUpdates, id), HttpStatus.OK);
+  public ResponseEntity<Department> partialReplaceDepartment(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
+    return new ResponseEntity<>(departmentService.partialReplace(partialUpdates, id), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
