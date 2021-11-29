@@ -15,7 +15,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -72,18 +71,16 @@ public class DepartmentServiceImplTest {
     assertEquals("department1", actual.getName());
   }
 
-  //  @Test
-  //  final void testPartialReplace_DepartmentIsAlreadyExists_ReplaceGivenFields() {
-  //    Map<String, Object> partialUpdates = new HashMap<>();
-  //    partialUpdates.put("description", "description1_updated");
-  //
-  //    when(departmentRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
-  //    when(departmentRepository.save(any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
-  //
-  //    Department actual = departmentService.partialReplace(partialUpdates, null);
-  //
-  //    assertNotNull(actual);
-  //    assertEquals("department1", actual.getName());
-  //    assertEquals("description1_updated", actual.getDescription());
-  //  }
+    @Test
+    final void testPartialReplace_DepartmentIsAlreadyExists_ReplaceGivenFields() {
+      Department department = Department.builder().description("description1_partially_updated").build();
+
+      when(departmentRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
+
+      Department actual = departmentService.partialReplace(department, null);
+
+      assertNotNull(actual);
+      assertEquals("department1", actual.getName());
+      assertEquals("description1_partially_updated", actual.getDescription());
+    }
 }

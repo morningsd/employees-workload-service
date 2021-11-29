@@ -54,6 +54,7 @@ public class User {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
   @Exclude
+  @JsonIgnore
   private List<UserProject> projects;
 
   @Override

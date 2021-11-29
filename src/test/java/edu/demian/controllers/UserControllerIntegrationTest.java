@@ -1,5 +1,6 @@
 package edu.demian.controllers;
 
+import static edu.demian.controllers.DepartmentControllerIntegrationTest.asJsonString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -8,11 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.configs.ApplicationConfig;
 import edu.demian.configs.H2JpaConfig;
-import edu.demian.entities.Department;
+import edu.demian.entities.User;
 import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,19 +36,19 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 @Sql("classpath:test-data.sql")
-public class DepartmentControllerIntegrationTest {
+public class UserControllerIntegrationTest {
 
   @Autowired
   private WebApplicationContext webApplicationContext;
 
   @Autowired
-  private DepartmentController departmentController;
+  private UserController userController;
 
   private MockMvc mockMvc;
   @BeforeEach
   public void setUp() {
     mockMvc = MockMvcBuilders
-        .standaloneSetup(departmentController)
+        .standaloneSetup(userController)
         .setControllerAdvice(new GlobalControllerExceptionHandler())
         .build();
   }
@@ -60,78 +59,73 @@ public class DepartmentControllerIntegrationTest {
 
     assertNotNull(servletContext);
     assertTrue(servletContext instanceof MockServletContext);
-    assertNotNull(webApplicationContext.getBean("departmentController"));
+    assertNotNull(webApplicationContext.getBean("userController"));
   }
 
   @Test
   final void findAll_DataExists_ReturnInstances() throws Exception {
     mockMvc
-        .perform(MockMvcRequestBuilders.get("/departments"))
+        .perform(MockMvcRequestBuilders.get("/users"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(4)))
-        .andExpect(jsonPath("$[0].name", is("department1_h2")))
-        .andExpect(jsonPath("$[1].description", is("description2_h2")));
+        .andExpect(jsonPath("$[0].firstName", is("first1_h2")))
+        .andExpect(jsonPath("$[1].lastName", is("last2_h2")));
   }
 
   @Test
   final void findById_DataExists_ReturnInstance() throws Exception {
     mockMvc
-        .perform(MockMvcRequestBuilders.get("/departments/{id}", "65123e14-e418-459e-91c0-4712fdb5170a"))
+        .perform(MockMvcRequestBuilders.get("/users/{id}", "6f597682-fd20-4676-a94c-85f20dbff099"))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name", is("department1_h2")))
-        .andExpect(jsonPath("$.description", is("description1_h2")));
+        .andExpect(jsonPath("$.firstName", is("first1_h2")))
+        .andExpect(jsonPath("$.lastName", is("last1_h2")));
   }
 
   @Test
   final void replaceDepartment_DataExists_ReturnUpdatedInstance() throws Exception {
-    Department department =
-        Department.builder()
-            .name("department2_h2_updated")
-            .description("description2_h2_updated")
+    User user =
+        User.builder()
+            .firstName("first2_h2_updated")
+            .lastName("last2_h2_updated")
+            .email("email2_updated@gmail.com")
+            .password("password2_updated")
             .build();
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.put("/departments/{id}", "75123e14-e418-459e-91c0-4712fdb5170a")
+            MockMvcRequestBuilders.put("/users/{id}", "7f597682-fd20-4676-a94c-85f20dbff099")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(department)))
+                .content(asJsonString(user)))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name", is("department2_h2_updated")))
-        .andExpect(jsonPath("$.description", is("description2_h2_updated")));
+        .andExpect(jsonPath("$.firstName", is("first2_h2_updated")))
+        .andExpect(jsonPath("$.lastName", is("last2_h2_updated")));
   }
 
   @Test
   final void partialReplaceDepartment_DataExists_ReturnPartlyUpdatedInstance() throws Exception {
-    Department department =
-        Department.builder()
-            .description("description3_h2_updated_partially")
+    User user =
+        User.builder()
+            .lastName("last3_h2_updated_partially")
             .build();
 
     mockMvc
         .perform(
-            MockMvcRequestBuilders.patch("/departments/{id}","85123e14-e418-459e-91c0-4712fdb5170a")
+            MockMvcRequestBuilders.patch("/users/{id}","8f597682-fd20-4676-a94c-85f20dbff099")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(department)))
+                .content(asJsonString(user)))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.name", is("department3_h2")))
-        .andExpect(jsonPath("$.description", is("description3_h2_updated_partially")));
+        .andExpect(jsonPath("$.firstName", is("first3_h2")))
+        .andExpect(jsonPath("$.lastName", is("last3_h2_updated_partially")));
   }
 
   @Test
   final void delete_DataExists_ReturnNothing() throws Exception {
     mockMvc
-        .perform(MockMvcRequestBuilders.delete("/departments/{id}", "95123e14-e418-459e-91c0-4712fdb5170a"))
+        .perform(MockMvcRequestBuilders.delete("/users/{id}", "9f597682-fd20-4676-a94c-85f20dbff099"))
         .andExpect(status().isOk());
   }
 
-  static String asJsonString(Object obj) {
-    try {
-      return new ObjectMapper().writeValueAsString(obj);
-    } catch (JsonProcessingException e) {
-      throw new RuntimeException(e);
-    }
-  }
 }

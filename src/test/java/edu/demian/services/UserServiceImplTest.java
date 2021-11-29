@@ -13,19 +13,15 @@ import edu.demian.exceptions.ResourceAlreadyExistsException;
 import edu.demian.repositories.UserRepository;
 import edu.demian.services.impl.UserServiceImpl;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
-
 
   @InjectMocks private UserServiceImpl userService;
 
@@ -88,18 +84,16 @@ public class UserServiceImplTest {
     assertEquals("First", actual.getFirstName());
   }
 
-//  @Test
-//  final void testPartialReplace_UserIsAlreadyExists_ReplaceGivenFields() {
-//    Map<String, Object> partialUpdates = new HashMap<>();
-//    partialUpdates.put("firstName", "First_updated");
-//
-//    when(userRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
-//    when(userRepository.save(any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
-//
-//    User actual = userService.partialReplace(partialUpdates, null);
-//
-//    assertNotNull(actual);
-//    assertEquals("First_updated", actual.getFirstName());
-//    assertEquals("Last", actual.getLastName());
-//  }
+  @Test
+  final void testPartialReplace_UserIsAlreadyExists_ReplaceGivenFields() {
+    User user = User.builder().lastName("Last_partially_updated").build();
+
+    when(userRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
+
+    User actual = userService.partialReplace(user, null);
+
+    assertNotNull(actual);
+    assertEquals("First", actual.getFirstName());
+    assertEquals("Last_partially_updated", actual.getLastName());
+  }
 }

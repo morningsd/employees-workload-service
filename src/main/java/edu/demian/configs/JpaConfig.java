@@ -5,7 +5,6 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configuration
 @EnableTransactionManagement
 @PropertySource({"classpath:database.properties"})
-@ComponentScan({"edu.demian"})
 @EnableJpaRepositories(basePackages = "edu.demian.repositories")
 public class JpaConfig {
 
@@ -45,8 +43,8 @@ public class JpaConfig {
     return entityManagerFactoryBean;
   }
 
-  final Properties additionalProperties() {
-    final Properties hibernateProperties = new Properties();
+  Properties additionalProperties() {
+    Properties hibernateProperties = new Properties();
     hibernateProperties.setProperty(
         "hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
     hibernateProperties.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
@@ -56,7 +54,7 @@ public class JpaConfig {
 
   @Bean
   public DataSource dataSource() {
-    final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+    DriverManagerDataSource dataSource = new DriverManagerDataSource();
     dataSource.setDriverClassName(Objects.requireNonNull(env.getProperty("jdbc.driverClassName")));
     dataSource.setUrl(env.getProperty("jdbc.url"));
     dataSource.setUsername(env.getProperty("jdbc.user"));

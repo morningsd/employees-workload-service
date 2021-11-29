@@ -26,6 +26,7 @@
     <opencsv.version>5.5.2</opencsv.version>
     <lombok.version>1.18.22</lombok.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
+    <h2.version>1.4.200</h2.version>
     <junit.version>5.8.1</junit.version>
     <mockito.version>4.1.0</mockito.version>
     <mockito.junit.version>4.1.0</mockito.junit.version>
@@ -177,7 +178,12 @@
       <scope>test</scope>
     </dependency>
 
-
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
