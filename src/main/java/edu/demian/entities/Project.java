@@ -41,7 +41,6 @@ public class Project {
   private String description;
 
   @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-  @JsonIgnore
   @Exclude
   private List<UserProject> users;
 

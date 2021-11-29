@@ -1,12 +1,16 @@
 package edu.demian.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.demian.dto.UserCreationDTO;
+import edu.demian.dto.UserDTO;
 import edu.demian.entities.User;
-import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,47 +27,61 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UserController {
 
+  private final ObjectMapper mapper;
   private final UserService userService;
   private final UserProjectService userProjectService;
 
-  public UserController(UserService userService, UserProjectService userProjectService) {
+  public UserController(
+      ObjectMapper mapper, UserService userService, UserProjectService userProjectService) {
+    this.mapper = mapper;
     this.userService = userService;
     this.userProjectService = userProjectService;
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<User> findById(@PathVariable UUID id) {
-    return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+  public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
+    return new ResponseEntity<>(
+        mapper.convertValue(userService.findById(id), new TypeReference<UserDTO>() {}),
+        HttpStatus.OK);
   }
 
   @GetMapping
-  public ResponseEntity<List<User>> findAll() {
-    return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+  public ResponseEntity<List<UserDTO>> findAll() {
+    return new ResponseEntity<>(
+        mapper.convertValue(userService.findAll(), new TypeReference<List<UserDTO>>() {}),
+        HttpStatus.OK);
   }
 
   @PostMapping
-  public ResponseEntity<User> register(@RequestBody User user, @RequestBody UUID departmentId) {
-    return new ResponseEntity<>(userService.save(user, departmentId), HttpStatus.OK);
+  public ResponseEntity<UserDTO> register(
+      @Valid @RequestBody UserCreationDTO userCreationDTO, @RequestBody UUID departmentId) {
+    User user = mapper.convertValue(userCreationDTO, new TypeReference<>() {});
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @PostMapping("/add-project")
-  public ResponseEntity<?> addProject(@RequestBody UUID userId, @RequestBody UUID projectId) {
+  public ResponseEntity<Void> addProject(@RequestBody UUID userId, @RequestBody UUID projectId) {
     userProjectService.addProjectToUser(userId, projectId);
-    return new ResponseEntity<>(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<User> replaceUser(@RequestBody User user, @PathVariable UUID id) {
-    return new ResponseEntity<>(userService.replace(user, id), HttpStatus.OK);
+  public ResponseEntity<UserDTO> replaceUser(@Valid @RequestBody UserCreationDTO userCreationDTO, @PathVariable UUID id) {
+    User user = mapper.convertValue(userCreationDTO, new TypeReference<>() {});
+    return new ResponseEntity<>(
+        mapper.convertValue(userService.replace(user, id), new TypeReference<UserDTO>() {}), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<User> partialReplaceUser(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
-    return new ResponseEntity<>(userService.partialReplace(partialUpdates, id), HttpStatus.OK);
+  public ResponseEntity<UserDTO> partialReplaceUser(
+      @Valid @RequestBody UserCreationDTO userCreationDTO, @PathVariable UUID id) {
+    User user = mapper.convertValue(userCreationDTO, new TypeReference<>() {});
+    return new ResponseEntity<>(
+        mapper.convertValue(userService.partialReplace(user, id), new TypeReference<UserDTO>() {}), HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> delete(@PathVariable UUID id) {
+  public ResponseEntity<Void> delete(@PathVariable UUID id) {
     userService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }

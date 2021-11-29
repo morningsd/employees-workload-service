@@ -18,7 +18,7 @@ public interface DepartmentService {
 
   Department replace(Department department, UUID id);
 
-  Department partialReplace(Map<String, Object> partialUpdates, UUID id);
+  Department partialReplace(Department department, UUID id);
 
   void delete(UUID id);
 }

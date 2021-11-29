@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -51,6 +52,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             () -> new ResourceNotFoundException("No department with id: " + id + " was found"));
   }
 
+  @Transactional
   @Override
   public Department replace(Department newDepartment, UUID id) {
     return departmentRepository
@@ -59,7 +61,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             department -> {
               department.setName(newDepartment.getName());
               department.setDescription(newDepartment.getDescription());
-              return departmentRepository.save(department);
+              return department;
             })
         .orElseThrow(
             () -> {
@@ -67,32 +69,19 @@ public class DepartmentServiceImpl implements DepartmentService {
             });
   }
 
+  @Transactional
   @Override
-  public Department partialReplace(Map<String, Object> partialUpdates, UUID id) {
-    return departmentRepository
-        .findById(id)
-        .map(
-            department -> {
-              partialUpdates.forEach(
-                  (field, value) -> {
-                    switch (field) {
-                      case "name":
-                        department.setName((String) value);
-                        break;
-                      case "description":
-                        department.setDescription((String) value);
-                        break;
-                      default:
-                        throw new ResourceHasNoSuchPropertyException(
-                            "Department has no field " + value);
-                    }
-                  });
-              return departmentRepository.save(department);
-            })
-        .orElseThrow(
-            () -> {
-              throw new ResourceNotFoundException("No department with id: " + " was found");
-            });
+  public Department partialReplace(Department newDepartment, UUID id) {
+    Department departmentToUpdate = departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No department with id: " + id + " was found"));
+    String name = newDepartment.getName();
+    String description = newDepartment.getDescription();
+    if (name != null && !name.isEmpty()) {
+      departmentToUpdate.setName(name);
+    }
+    if (description != null && !description.isEmpty()) {
+      departmentToUpdate.setDescription(description);
+    }
+    return departmentToUpdate;
   }
 
   @Override

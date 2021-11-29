@@ -1,16 +1,16 @@
 package edu.demian.services.impl;
 
+import edu.demian.entities.Department;
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
-import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
 import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.UserRepository;
 import edu.demian.services.DepartmentService;
 import edu.demian.services.UserService;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
         .orElseThrow(() -> new ResourceNotFoundException("No user with id: " + id + " was found"));
   }
 
+  @Transactional
   @Override
   public User replace(User newUser, UUID id) {
     return userRepository
@@ -59,7 +60,7 @@ public class UserServiceImpl implements UserService {
               user.setLastName(newUser.getLastName());
               user.setEmail(newUser.getEmail());
               user.setPassword(newUser.getPassword());
-              return userRepository.save(user);
+              return user;
             })
         .orElseThrow(
             () -> {
@@ -67,39 +68,33 @@ public class UserServiceImpl implements UserService {
             });
   }
 
-
+  @Transactional
   @Override
-  public User partialReplace(Map<String, Object> partialUpdates, UUID id) {
-    return userRepository
-        .findById(id)
-        .map(
-            user -> {
-              partialUpdates.forEach(
-                  (field, value) -> {
-                    switch (field) {
-                      case "firstName":
-                        user.setFirstName((String) value);
-                        break;
-                      case "lastName":
-                        user.setLastName((String) value);
-                        break;
-                      case "email":
-                        user.setEmail((String) value);
-                        break;
-                      case "password":
-                        user.setPassword((String) value);
-                        break;
-                      default:
-                        throw new ResourceHasNoSuchPropertyException("User has no field " + value);
-                    }
-                  });
-              return userRepository.save(user);
-            })
-        .orElseThrow(
-            () -> {
-              throw new ResourceNotFoundException("No user with id: " + id + " was found");
-            });
+  public User partialReplace(User newUser, UUID id) {
+    User userToUpdate = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user with id: " + id + " was found"));
+    String firstName = newUser.getFirstName();
+    String lastName = newUser.getLastName();
+    String email = newUser.getEmail();
+    String password = newUser.getPassword();
+    Department department = newUser.getDepartment();
+    if (firstName != null && !firstName.isEmpty()) {
+      userToUpdate.setFirstName(firstName);
+    }
+    if (lastName != null && !lastName.isEmpty()) {
+      userToUpdate.setLastName(lastName);
+    }
+    if (email != null && !email.isEmpty()) {
+      userToUpdate.setEmail(email);
+    }
+    if (password != null && !password.isEmpty()) {
+      userToUpdate.setPassword(password);
+    }
+    if (department != null) {
+      userToUpdate.setDepartment(department);
+    }
+    return userToUpdate;
   }
+
 
   @Override
   public void delete(UUID id) {

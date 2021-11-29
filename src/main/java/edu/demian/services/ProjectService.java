@@ -20,7 +20,7 @@ public interface ProjectService {
 
   Project replace(Project project, UUID id);
 
-  Project partialReplace(Map<String, Object> partialUpdates, UUID id);
+  Project partialReplace(Project project, UUID id);
 
   void delete(UUID id);
 }

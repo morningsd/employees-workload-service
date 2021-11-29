@@ -16,7 +16,7 @@ public interface UserService {
 
   User replace(User user, UUID id);
 
-  User partialReplace(Map<String, Object> partialUpdates, UUID id);
+  User partialReplace(User user, UUID id);
 
   void delete(UUID id);
 }

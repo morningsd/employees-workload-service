@@ -3,15 +3,13 @@ package edu.demian.services.impl;
 import edu.demian.entities.Project;
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
-import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
 import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.ProjectRepository;
 import edu.demian.services.ProjectService;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -59,6 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
         .orElseThrow(() -> new ResourceNotFoundException("No user with id: " + " was found"));
   }
 
+  @Transactional
   @Override
   public Project replace(Project newProject, UUID id) {
     return projectRepository
@@ -67,7 +66,7 @@ public class ProjectServiceImpl implements ProjectService {
             project -> {
               project.setName(newProject.getName());
               project.setDescription(newProject.getDescription());
-              return projectRepository.save(project);
+              return project;
             })
         .orElseThrow(
             () -> {
@@ -75,32 +74,17 @@ public class ProjectServiceImpl implements ProjectService {
             });
   }
 
+  @Transactional
   @Override
-  public Project partialReplace(Map<String, Object> partialUpdates, UUID id) {
-    return projectRepository
-        .findById(id)
-        .map(
-            project -> {
-              partialUpdates.forEach(
-                  (field, value) -> {
-                    switch (field) {
-                      case "name":
-                        project.setName((String) value);
-                        break;
-                      case "description":
-                        project.setDescription((String) value);
-                        break;
-                      default:
-                        throw new ResourceHasNoSuchPropertyException(
-                            "Project has no field " + value);
-                    }
-                  });
-              return projectRepository.save(project);
-            })
-        .orElseThrow(
-            () -> {
-              throw new ResourceNotFoundException("No project with id: " + id + " was found");
-            });
+  public Project partialReplace(Project newProject, UUID id) {
+    Project projectToUpdate = projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No project with id: " + id + " was found"));
+    if (newProject.getName() != null && !newProject.getName().isEmpty()) {
+      projectToUpdate.setName(newProject.getName());
+    }
+    if (newProject.getDescription() != null && !newProject.getDescription().isEmpty()) {
+      projectToUpdate.setDescription(newProject.getDescription());
+    }
+    return projectToUpdate;
   }
 
   @Override

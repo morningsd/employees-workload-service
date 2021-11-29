@@ -42,7 +42,6 @@ public class User {
   @Column(name = "last_name", nullable = false)
   private String lastName;
 
-  // TODO add email validation to the corresponding dto
   @Column(name = "email", unique = true, nullable = false)
   private String email;
 
@@ -54,7 +53,6 @@ public class User {
   private Department department;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-  @JsonIgnore
   @Exclude
   private List<UserProject> projects;
 

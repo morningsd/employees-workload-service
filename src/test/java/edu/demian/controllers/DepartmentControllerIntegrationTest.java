@@ -2,7 +2,8 @@ package edu.demian.controllers;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,43 +15,52 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.demian.configs.JpaConfig;
 import edu.demian.entities.Department;
 import edu.demian.services.DepartmentService;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
+import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-public class DepartmentControllerTest {
+@ExtendWith({MockitoExtension.class, SpringExtension.class})
+@ContextConfiguration(classes = {JpaConfig.class})
+@WebAppConfiguration("src/main/java/edu/demian/configs")
+public class DepartmentControllerIntegrationTest {
 
-  private AutoCloseable openMocks;
-
-  private MockMvc mockMvc;
+  @Autowired
+  private WebApplicationContext webApplicationContext;
 
   @Mock private DepartmentService departmentService;
 
-  @InjectMocks private DepartmentController departmentController;
-
+  private MockMvc mockMvc;
   @BeforeEach
   public void setUp() {
-    openMocks = MockitoAnnotations.openMocks(this);
-    mockMvc = MockMvcBuilders.standaloneSetup(departmentController).build();
+    mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
   }
 
-  @AfterEach
-  void tearDown() throws Exception {
-    openMocks.close();
+  @Test
+  public void testContext_ServletContext_ProvidesDepartmentController() {
+    ServletContext servletContext = webApplicationContext.getServletContext();
+
+    assertNotNull(servletContext);
+    assertTrue(servletContext instanceof MockServletContext);
+    assertNotNull(webApplicationContext.getBean("departmentController"));
   }
 
   @Test
@@ -108,26 +118,26 @@ public class DepartmentControllerTest {
     verify(departmentService, times(1)).replace(department, uuid);
   }
 
-  @Test
-  final void testPartialReplaceDepartment_InstanceExists_ReturnPartlyUpdatedObject() throws Exception {
-    UUID uuid = UUID.randomUUID();
-    Department department =
-        Department.builder()
-            .id(uuid)
-            .name("department_name")
-            .description("department_description")
-            .build();
-    Map<String, Object> partialUpdates = new HashMap<>();
-    when(departmentService.partialReplace(any(), any())).thenReturn(department);
-
-    mockMvc
-        .perform(
-            MockMvcRequestBuilders.patch("/departments/{id}", department.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(partialUpdates)))
-        .andExpect(status().isOk());
-    verify(departmentService, times(1)).partialReplace(partialUpdates, department.getId());
-  }
+//  @Test
+//  final void testPartialReplaceDepartment_InstanceExists_ReturnPartlyUpdatedObject() throws Exception {
+//    UUID uuid = UUID.randomUUID();
+//    Department department =
+//        Department.builder()
+//            .id(uuid)
+//            .name("department_name")
+//            .description("department_description")
+//            .build();
+//    Map<String, Object> partialUpdates = new HashMap<>();
+//    when(departmentService.partialReplace(any(), any())).thenReturn(department);
+//
+//    mockMvc
+//        .perform(
+//            MockMvcRequestBuilders.patch("/departments/{id}", department.getId())
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(asJsonString(partialUpdates)))
+//        .andExpect(status().isOk());
+//    verify(departmentService, times(1)).partialReplace(partialUpdates, department.getId());
+//  }
 
   @Test
   final void testDelete_InstanceExists_ReturnNothing() throws Exception {

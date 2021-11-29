@@ -1,12 +1,14 @@
 package edu.demian.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.demian.dto.ProjectDTO;
 import edu.demian.entities.Project;
-import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,52 +25,74 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/projects")
 public class ProjectController {
 
+  private final ObjectMapper mapper;
   private final ProjectService projectService;
   private final UserProjectService userProjectService;
 
-  public ProjectController(ProjectService projectService, UserProjectService userProjectService) {
+  public ProjectController(
+      ObjectMapper mapper, ProjectService projectService, UserProjectService userProjectService) {
+    this.mapper = mapper;
     this.projectService = projectService;
     this.userProjectService = userProjectService;
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Project> findById(@PathVariable UUID id) {
-    return new ResponseEntity<>(projectService.findById(id), HttpStatus.OK);
+  public ResponseEntity<ProjectDTO> findById(@PathVariable UUID id) {
+    return new ResponseEntity<>(
+        mapper.convertValue(projectService.findById(id), new TypeReference<ProjectDTO>() {}),
+        HttpStatus.OK);
   }
 
   @GetMapping
-  public ResponseEntity<List<Project>> findAll() {
-    return new ResponseEntity<>(projectService.findAll(), HttpStatus.OK);
+  public ResponseEntity<List<ProjectDTO>> findAll() {
+    return new ResponseEntity<>(
+        mapper.convertValue(projectService.findAll(), new TypeReference<List<ProjectDTO>>() {}),
+        HttpStatus.OK);
   }
 
   @PostMapping
-  public ResponseEntity<Project> save(@RequestBody Project project) {
-    return new ResponseEntity<>(projectService.save(project), HttpStatus.OK);
+  public ResponseEntity<ProjectDTO> save(@Valid @RequestBody ProjectDTO projectDTO) {
+    Project project = mapper.convertValue(projectDTO, new TypeReference<>() {});
+    return new ResponseEntity<>(
+        mapper.convertValue(projectService.save(project), new TypeReference<ProjectDTO>() {}),
+        HttpStatus.OK);
   }
 
   @GetMapping("/name={name}")
-  public ResponseEntity<Project> findByName(@PathVariable String name) {
-    return new ResponseEntity<>(projectService.findByName(name), HttpStatus.OK);
+  public ResponseEntity<ProjectDTO> findByName(@PathVariable String name) {
+    return new ResponseEntity<>(
+        mapper.convertValue(projectService.findByName(name), new TypeReference<ProjectDTO>() {}),
+        HttpStatus.OK);
   }
 
   @PostMapping("/add-user")
-  public ResponseEntity<?> addUser(@RequestBody UUID userId, @RequestBody UUID projectId) {
+  public ResponseEntity<Void> addUser(@RequestBody UUID userId, @RequestBody UUID projectId) {
     userProjectService.addProjectToUser(userId, projectId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Project> replaceProject(@RequestBody Project project, @PathVariable UUID id) {
-    return new ResponseEntity<>(projectService.replace(project, id), HttpStatus.OK);
+  public ResponseEntity<ProjectDTO> replaceProject(
+      @Valid @RequestBody ProjectDTO projectDTO, @PathVariable UUID id) {
+    Project project = mapper.convertValue(projectDTO, new TypeReference<>() {});
+    return new ResponseEntity<>(
+        mapper.convertValue(
+            projectService.replace(project, id), new TypeReference<ProjectDTO>() {}),
+        HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
-  public ResponseEntity<Project> partialReplaceProject(@RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
-    return new ResponseEntity<>(projectService.partialReplace(partialUpdates, id), HttpStatus.OK);
+  public ResponseEntity<ProjectDTO> partialReplaceProject(
+      @Valid @RequestBody ProjectDTO projectDTO, @PathVariable UUID id) {
+    Project project = mapper.convertValue(projectDTO, new TypeReference<>() {});
+    return new ResponseEntity<>(
+        mapper.convertValue(
+            projectService.partialReplace(project, id), new TypeReference<ProjectDTO>() {}),
+        HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> delete(@PathVariable UUID id) {
+  public ResponseEntity<Void> delete(@PathVariable UUID id) {
     projectService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
   }
