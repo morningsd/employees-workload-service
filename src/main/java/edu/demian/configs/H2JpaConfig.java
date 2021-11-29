@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "edu.demian.repositories")
-@PropertySource({"classpath:test-database.properties"})
+@PropertySource({"classpath:application-test.properties"})
 @EnableTransactionManagement
 public class H2JpaConfig {
 
@@ -50,6 +50,7 @@ public class H2JpaConfig {
     hibernateProperties.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
     return hibernateProperties;
   }
+
   @Bean
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
