@@ -19,6 +19,4 @@ public class ProjectDTO {
   @Size(max = 1024)
   private String description;
 
-  private Set<UserDTO> users;
-
 }

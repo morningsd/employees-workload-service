@@ -5,7 +5,17 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
+@ToString
+@Getter
+@Setter
 @Embeddable
 public class UserProjectId implements Serializable {
 
@@ -14,22 +24,6 @@ public class UserProjectId implements Serializable {
 
   @Column(name = "project_id")
   private UUID projectId;
-
-  public UUID getUserId() {
-    return userId;
-  }
-
-  public void setUserId(UUID userId) {
-    this.userId = userId;
-  }
-
-  public UUID getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(UUID projectId) {
-    this.projectId = projectId;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -48,4 +42,5 @@ public class UserProjectId implements Serializable {
   public int hashCode() {
     return Objects.hash(userId, projectId);
   }
+
 }

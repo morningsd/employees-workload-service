@@ -39,11 +39,6 @@ public class Department {
   @Column(name = "description", length = 1024, nullable = false)
   private String description;
 
-  @OneToMany(mappedBy = "department")
-  @Exclude
-  @JsonIgnore
-  private Set<User> users;
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {

@@ -1,6 +1,8 @@
 package edu.demian.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -28,6 +30,10 @@ import org.hibernate.Hibernate;
 @ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id"
+)
 public class Project {
 
   @Id
@@ -39,11 +45,6 @@ public class Project {
 
   @Column(name = "description", length = 1024, nullable = false)
   private String description;
-
-  @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
-  @Exclude
-  @JsonIgnore
-  private List<UserProject> users;
 
   @Override
   public boolean equals(Object o) {

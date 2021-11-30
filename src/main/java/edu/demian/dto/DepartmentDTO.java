@@ -22,7 +22,4 @@ public class DepartmentDTO {
   @Size(max = 1024)
   private String description;
 
-  @JsonIgnore
-  private Set<UserDTO> users;
-
 }
