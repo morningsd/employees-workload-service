@@ -8,8 +8,6 @@ public class UserProjectDTO {
 
   private UserProjectIdDTO id;
 
-  private UserDTO user;
-
   private ProjectDTO project;
 
   private int workingHours;
