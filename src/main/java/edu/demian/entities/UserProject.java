@@ -1,5 +1,6 @@
 package edu.demian.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -33,14 +34,13 @@ public class UserProject {
   @ManyToOne
   @MapsId("userId")
   @JoinColumn(name = "user_id")
-  @JsonIgnore
   @Exclude
+  @JsonBackReference
   private User user;
 
   @ManyToOne
   @MapsId("projectId")
   @JoinColumn(name = "project_id")
-//  @JsonIgnore
   @Exclude
   private Project project;
 

@@ -1,8 +1,6 @@
 package edu.demian.entities;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -21,7 +19,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.ToString.Exclude;
 import org.hibernate.Hibernate;
 
 @Entity
@@ -32,10 +29,6 @@ import org.hibernate.Hibernate;
 @ToString
 @AllArgsConstructor
 @RequiredArgsConstructor
-@JsonIdentityInfo(
-    generator = ObjectIdGenerators.PropertyGenerator.class,
-    property = "id"
-)
 public class User {
 
   @Id
@@ -59,6 +52,7 @@ public class User {
   private Department department;
 
   @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+  @JsonManagedReference
   private List<UserProject> projects;
 
   @Override
