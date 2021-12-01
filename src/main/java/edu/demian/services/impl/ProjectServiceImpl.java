@@ -1,13 +1,18 @@
 package edu.demian.services.impl;
 
+import static edu.demian.services.util.ServiceUtils.applyPatches;
+
 import edu.demian.entities.Project;
 import edu.demian.entities.User;
-import edu.demian.exceptions.ServiceException;
+import edu.demian.exceptions.ResourceAlreadyExistsException;
+import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.ProjectRepository;
 import edu.demian.services.ProjectService;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -20,15 +25,22 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Override
   public Project save(Project project) {
-    projectRepository.findByName(project.getName()).ifPresent(projectFromDb -> {
-      throw new ServiceException("Project: " + projectFromDb.getName() + " already exists");
-    });
+    projectRepository
+        .findByName(project.getName())
+        .ifPresent(
+            projectFromDb -> {
+              throw new ResourceAlreadyExistsException(
+                  "Project: " + projectFromDb.getName() + " already exists");
+            });
     return projectRepository.save(project);
   }
 
   @Override
-  public Optional<Project> findByName(String name) {
-    return projectRepository.findByName(name);
+  public Project findByName(String name) {
+    return projectRepository
+        .findByName(name)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("No project with name: " + name + " was found"));
   }
 
   @Override
@@ -41,4 +53,44 @@ public class ProjectServiceImpl implements ProjectService {
     return projectRepository.findAll();
   }
 
+  @Override
+  public Project findById(UUID id) {
+    return projectRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("No user with id: " + " was found"));
+  }
+
+  @Transactional
+  @Override
+  public Project replace(Project newProject, UUID id) {
+    return projectRepository
+        .findById(id)
+        .map(
+            project -> {
+              project.setName(newProject.getName());
+              project.setDescription(newProject.getDescription());
+              return project;
+            })
+        .orElseThrow(
+            () -> {
+              throw new ResourceNotFoundException("No project with id: " + id + " was found");
+            });
+  }
+
+  @Transactional
+  @Override
+  public Project partialReplace(Map<String, Object> partialUpdates, UUID id) {
+    Project projectToPatch =
+        projectRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("No project with id: " + id + " was found"));
+
+    return applyPatches(projectToPatch, partialUpdates, Project.class);
+  }
+
+  @Override
+  public void delete(UUID id) {
+    projectRepository.deleteById(id);
+  }
 }
