@@ -1,19 +1,18 @@
 package edu.demian.services.impl;
 
+import static edu.demian.services.util.ServiceUtils.applyPatches;
+
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
-import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
 import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.UserRepository;
 import edu.demian.services.DepartmentService;
 import edu.demian.services.UserService;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ReflectionUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -80,17 +79,7 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("No user with id: " + id + " was found"));
 
-    partialUpdates.remove("id");
-    partialUpdates.forEach(
-        (k, v) -> {
-          Field field = ReflectionUtils.findField(User.class, k);
-          if (field == null) {
-            throw new ResourceHasNoSuchPropertyException("User has no field: " + k);
-          }
-          field.setAccessible(true);
-          ReflectionUtils.setField(field, userToPatch, v);
-        });
-    return userToPatch;
+    return applyPatches(userToPatch, partialUpdates, User.class);
   }
 
   @Override
