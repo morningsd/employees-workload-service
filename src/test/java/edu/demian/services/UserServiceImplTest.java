@@ -42,7 +42,7 @@ public class UserServiceImplTest {
   }
 
   @Test
-  final void testSave_UserIsAlreadyExists_ExceptionThrown() {
+  final void save_UserIsAlreadyExists_ThrowException() {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(stub));
 
     assertThrows(
@@ -52,7 +52,7 @@ public class UserServiceImplTest {
   }
 
   @Test
-  final void testReplace_UserIsAlreadyExists_ReplaceObject() {
+  final void replace_UserIsAlreadyExists_ReplaceInstance() {
     User stub2 =
         User.builder()
             .firstName("First_updated")
@@ -73,7 +73,7 @@ public class UserServiceImplTest {
   }
 
   @Test
-  final void testSave_NoSuchUserYet_ReturnUser() {
+  final void save_NoSuchUserYet_ReturnSavedInstance() {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
     when(departmentService.findById(any())).thenReturn(new Department());
     when(userRepository.save(any())).thenReturn(stub);
@@ -85,7 +85,7 @@ public class UserServiceImplTest {
   }
 
   @Test
-  final void testPartialReplace_UserIsAlreadyExists_ReplaceGivenFields() {
+  final void partialReplace_UserIsAlreadyExists_ReplaceGivenFields() {
     User user = User.builder().lastName("Last_partially_updated").build();
 
     when(userRepository.findById(any())).thenReturn(Optional.ofNullable(stub));

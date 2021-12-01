@@ -34,7 +34,7 @@ public class DepartmentServiceImplTest {
   }
 
   @Test
-  final void testSave_DepartmentIsAlreadyExists_ExceptionThrown() {
+  final void save_DepartmentIsAlreadyExists_ThrowException() {
     when(departmentRepository.findByName(anyString())).thenReturn(Optional.of(stub));
 
     assertThrows(
@@ -44,7 +44,7 @@ public class DepartmentServiceImplTest {
   }
 
   @Test
-  final void testReplace_DepartmentIsAlreadyExists_ReplaceObject() {
+  final void replace_DepartmentIsAlreadyExists_ReplaceInstance() {
     Department stub2 =
         Department.builder()
             .name("department1_updated")
@@ -61,7 +61,7 @@ public class DepartmentServiceImplTest {
   }
 
   @Test
-  final void testSave_NoSuchDepartmentYet_ReturnDepartment() {
+  final void save_NoSuchDepartmentYet_ReturnSavedInstance() {
     when(departmentRepository.findByName(anyString())).thenReturn(Optional.empty());
     when(departmentRepository.save(any())).thenReturn(stub);
 
@@ -72,7 +72,7 @@ public class DepartmentServiceImplTest {
   }
 
     @Test
-    final void testPartialReplace_DepartmentIsAlreadyExists_ReplaceGivenFields() {
+    final void partialReplace_DepartmentIsAlreadyExists_ReplaceGivenFields() {
       Department department = Department.builder().description("description1_partially_updated").build();
 
       when(departmentRepository.findById(any())).thenReturn(Optional.ofNullable(stub));

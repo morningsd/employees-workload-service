@@ -34,7 +34,7 @@ public class ProjectServiceImplTest {
   }
 
   @Test
-  final void testSave_ProjectIsAlreadyExists_ExceptionThrown() {
+  final void save_ProjectIsAlreadyExists_ThrowException() {
     when(projectRepository.findByName(anyString())).thenReturn(Optional.of(stub));
 
     assertThrows(
@@ -44,7 +44,7 @@ public class ProjectServiceImplTest {
   }
 
   @Test
-  final void testReplace_ProjectIsAlreadyExists_ReplaceObject() {
+  final void replace_ProjectIsAlreadyExists_ReplaceInstance() {
     Project stub2 =
         Project.builder().name("project1_updated").description("description1_updated").build();
 
@@ -58,7 +58,7 @@ public class ProjectServiceImplTest {
   }
 
   @Test
-  final void testSave_NoSuchProjectYet_ReturnProject() {
+  final void save_NoSuchProjectYet_ReturnSavedInstance() {
     when(projectRepository.findByName(anyString())).thenReturn(Optional.empty());
     when(projectRepository.save(any())).thenReturn(stub);
 
@@ -69,7 +69,7 @@ public class ProjectServiceImplTest {
   }
 
   @Test
-  final void testPartialReplace_ProjectIsAlreadyExists_ReplaceGivenFields() {
+  final void partialReplace_ProjectIsAlreadyExists_ReplaceGivenFields() {
     Project project = Project.builder().description("description1_partially_updated").build();
 
     when(projectRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
