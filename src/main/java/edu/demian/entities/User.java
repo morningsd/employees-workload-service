@@ -1,6 +1,6 @@
 package edu.demian.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -19,7 +19,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.ToString.Exclude;
 import org.hibernate.Hibernate;
 
 @Entity
@@ -52,8 +51,8 @@ public class User {
   @JoinColumn(name = "department_id")
   private Department department;
 
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-  @Exclude
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+  @JsonManagedReference
   private List<UserProject> projects;
 
   @Override

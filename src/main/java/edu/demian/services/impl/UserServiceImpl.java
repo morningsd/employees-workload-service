@@ -20,7 +20,8 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final DepartmentService departmentService;
 
-  public UserServiceImpl(UserRepository userRepository, DepartmentService departmentService) {
+  public UserServiceImpl(UserRepository userRepository,
+      DepartmentService departmentService) {
     this.userRepository = userRepository;
     this.departmentService = departmentService;
   }
@@ -86,4 +87,5 @@ public class UserServiceImpl implements UserService {
   public void delete(UUID id) {
     userRepository.deleteById(id);
   }
+
 }

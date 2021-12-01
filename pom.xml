@@ -17,6 +17,7 @@
     <maven.compiler.target>11</maven.compiler.target>
     <spring.version>5.3.13</spring.version>
     <jackson.version>2.13.0</jackson.version>
+    <jackson.jsr310.version>2.13.0</jackson.jsr310.version>
     <spring.data.version>2.6.0</spring.data.version>
     <hibernate.version>5.6.1.Final</hibernate.version>
     <javax.validation.version>2.0.1.Final</javax.validation.version>
@@ -26,6 +27,7 @@
     <opencsv.version>5.5.2</opencsv.version>
     <lombok.version>1.18.22</lombok.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
+    <h2.version>1.4.200</h2.version>
     <junit.version>5.8.1</junit.version>
     <mockito.version>4.1.0</mockito.version>
     <mockito.junit.version>4.1.0</mockito.junit.version>
@@ -75,6 +77,12 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson.jsr310.version}</version>
     </dependency>
 
     <dependency>
@@ -174,6 +182,13 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
       <version>${mockito.junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
       <scope>test</scope>
     </dependency>
 

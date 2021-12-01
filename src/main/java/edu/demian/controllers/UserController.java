@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.dto.UserCreationDTO;
 import edu.demian.dto.UserDTO;
+import edu.demian.dto.UserProjectIdDTO;
 import edu.demian.entities.User;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -47,8 +47,10 @@ public class UserController {
 
   @GetMapping
   public ResponseEntity<List<UserDTO>> findAll() {
+    List<User> all = userService.findAll();
+    System.out.println(all);
     return new ResponseEntity<>(
-        mapper.convertValue(userService.findAll(), new TypeReference<List<UserDTO>>() {}),
+        mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}),
         HttpStatus.OK);
   }
 
@@ -56,12 +58,14 @@ public class UserController {
   public ResponseEntity<UserDTO> register(
       @Valid @RequestBody UserCreationDTO userCreationDTO, @RequestBody UUID departmentId) {
     User user = mapper.convertValue(userCreationDTO, User.class);
+    userService.save(user, departmentId);
+    
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @PostMapping("/add-project")
-  public ResponseEntity<Void> addProject(@RequestBody UUID userId, @RequestBody UUID projectId) {
-    userProjectService.addProjectToUser(userId, projectId);
+  public ResponseEntity<Void> addProject(@Valid @RequestBody UserProjectIdDTO userProjectIdDTO) {
+    userProjectService.addProjectToUser(userProjectIdDTO.getUserId(), userProjectIdDTO.getProjectId());
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 

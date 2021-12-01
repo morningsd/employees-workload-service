@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -39,11 +38,6 @@ public class Department {
 
   @Column(name = "description", length = 1024, nullable = false)
   private String description;
-
-  @OneToMany(mappedBy = "department")
-  @Exclude
-  @JsonIgnore
-  private Set<User> users;
 
   @Override
   public boolean equals(Object o) {
