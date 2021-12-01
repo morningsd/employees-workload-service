@@ -24,4 +24,5 @@ public class WebConfig implements WebMvcConfigurer {
   public ObjectMapper objectMapper() {
     return new ObjectMapper();
   }
+
 }

@@ -6,12 +6,13 @@ import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
 import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.DepartmentRepository;
 import edu.demian.services.DepartmentService;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -36,7 +37,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   public Department findByName(String name) {
-    return departmentRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("No department with name: " + name + " was found"));
+    return departmentRepository
+        .findByName(name)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("No department with name: " + name + " was found"));
   }
 
   @Override
@@ -71,17 +75,24 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Transactional
   @Override
-  public Department partialReplace(Department newDepartment, UUID id) {
-    Department departmentToUpdate = departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No department with id: " + id + " was found"));
-    String name = newDepartment.getName();
-    String description = newDepartment.getDescription();
-    if (name != null && !name.isEmpty()) {
-      departmentToUpdate.setName(name);
-    }
-    if (description != null && !description.isEmpty()) {
-      departmentToUpdate.setDescription(description);
-    }
-    return departmentToUpdate;
+  public Department partialReplace(Map<String, Object> partialUpdates, UUID id) {
+    Department departmentToPatch =
+        departmentRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("No department with id: " + id + " was found"));
+
+    partialUpdates.remove("id");
+    partialUpdates.forEach(
+        (k, v) -> {
+          Field field = ReflectionUtils.findField(Department.class, k);
+          if (field == null) {
+            throw new ResourceHasNoSuchPropertyException("Department has no field: " + k);
+          }
+          field.setAccessible(true);
+          ReflectionUtils.setField(field, departmentToPatch, v);
+        });
+    return departmentToPatch;
   }
 
   @Override

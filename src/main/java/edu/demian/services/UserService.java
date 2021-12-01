@@ -3,7 +3,6 @@ package edu.demian.services;
 import edu.demian.entities.User;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
@@ -16,7 +15,7 @@ public interface UserService {
 
   User replace(User user, UUID id);
 
-  User partialReplace(User user, UUID id);
+  User partialReplace(Map<String, Object> partialUpdates, UUID id);
 
   void delete(UUID id);
 }

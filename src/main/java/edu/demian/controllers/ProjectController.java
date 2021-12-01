@@ -7,6 +7,7 @@ import edu.demian.entities.Project;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,7 @@ public class ProjectController {
   @GetMapping("/{id}")
   public ResponseEntity<ProjectDTO> findById(@PathVariable UUID id) {
     return new ResponseEntity<>(
-        mapper.convertValue(projectService.findById(id), new TypeReference<ProjectDTO>() {}),
+        mapper.convertValue(projectService.findById(id), ProjectDTO.class),
         HttpStatus.OK);
   }
 
@@ -54,14 +55,14 @@ public class ProjectController {
   public ResponseEntity<ProjectDTO> save(@Valid @RequestBody ProjectDTO projectDTO) {
     Project project = mapper.convertValue(projectDTO, new TypeReference<>() {});
     return new ResponseEntity<>(
-        mapper.convertValue(projectService.save(project), new TypeReference<ProjectDTO>() {}),
+        mapper.convertValue(projectService.save(project), ProjectDTO.class),
         HttpStatus.OK);
   }
 
   @GetMapping("/name={name}")
   public ResponseEntity<ProjectDTO> findByName(@PathVariable String name) {
     return new ResponseEntity<>(
-        mapper.convertValue(projectService.findByName(name), new TypeReference<ProjectDTO>() {}),
+        mapper.convertValue(projectService.findByName(name), ProjectDTO.class),
         HttpStatus.OK);
   }
 
@@ -74,20 +75,19 @@ public class ProjectController {
   @PutMapping("/{id}")
   public ResponseEntity<ProjectDTO> replaceProject(
       @Valid @RequestBody ProjectDTO projectDTO, @PathVariable UUID id) {
-    Project project = mapper.convertValue(projectDTO, new TypeReference<>() {});
+    Project project = mapper.convertValue(projectDTO, Project.class);
     return new ResponseEntity<>(
         mapper.convertValue(
-            projectService.replace(project, id), new TypeReference<ProjectDTO>() {}),
+            projectService.replace(project, id), ProjectDTO.class),
         HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<ProjectDTO> partialReplaceProject(
-      @Valid @RequestBody ProjectDTO projectDTO, @PathVariable UUID id) {
-    Project project = mapper.convertValue(projectDTO, new TypeReference<>() {});
+      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(
         mapper.convertValue(
-            projectService.partialReplace(project, id), new TypeReference<ProjectDTO>() {}),
+            projectService.partialReplace(partialUpdates, id), ProjectDTO.class),
         HttpStatus.OK);
   }
 

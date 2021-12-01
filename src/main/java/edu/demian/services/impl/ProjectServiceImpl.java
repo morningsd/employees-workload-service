@@ -3,13 +3,17 @@ package edu.demian.services.impl;
 import edu.demian.entities.Project;
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
+import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
 import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.ProjectRepository;
 import edu.demian.services.ProjectService;
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -76,15 +80,24 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Transactional
   @Override
-  public Project partialReplace(Project newProject, UUID id) {
-    Project projectToUpdate = projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No project with id: " + id + " was found"));
-    if (newProject.getName() != null && !newProject.getName().isEmpty()) {
-      projectToUpdate.setName(newProject.getName());
-    }
-    if (newProject.getDescription() != null && !newProject.getDescription().isEmpty()) {
-      projectToUpdate.setDescription(newProject.getDescription());
-    }
-    return projectToUpdate;
+  public Project partialReplace(Map<String, Object> partialUpdates, UUID id) {
+    Project projectToPatch =
+        projectRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("No project with id: " + id + " was found"));
+
+    partialUpdates.remove("id");
+    partialUpdates.forEach(
+        (k, v) -> {
+          Field field = ReflectionUtils.findField(Project.class, k);
+          if (field == null) {
+            throw new ResourceHasNoSuchPropertyException("Project has no field: " + k);
+          }
+          field.setAccessible(true);
+          ReflectionUtils.setField(field, projectToPatch, v);
+        });
+    return projectToPatch;
   }
 
   @Override
