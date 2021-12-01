@@ -8,12 +8,11 @@ import org.springframework.util.ReflectionUtils;
 public class ServiceUtils {
 
   public static <T> T applyPatches(T entityToPatch, Map<String, Object> partialUpdates, Class<?> clazz) {
-    partialUpdates.remove("id");
     partialUpdates.forEach(
         (k, v) -> {
           Field field = ReflectionUtils.findField(clazz, k);
           if (field == null) {
-            throw new ResourceHasNoSuchPropertyException("Department has no field: " + k);
+            throw new ResourceHasNoSuchPropertyException(clazz.getName() + " has no field: " + k);
           }
           field.setAccessible(true);
           ReflectionUtils.setField(field, entityToPatch, v);
