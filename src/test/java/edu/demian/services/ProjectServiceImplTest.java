@@ -11,6 +11,8 @@ import edu.demian.entities.Project;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
 import edu.demian.repositories.ProjectRepository;
 import edu.demian.services.impl.ProjectServiceImpl;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,11 +72,12 @@ public class ProjectServiceImplTest {
 
   @Test
   final void partialReplace_ProjectIsAlreadyExists_ReplaceGivenFields() {
-    Project project = Project.builder().description("description1_partially_updated").build();
+    Map<String, Object> partialUpdates = new HashMap<>();
+    partialUpdates.put("description", "description1_partially_updated");
 
     when(projectRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
 
-    Project actual = projectService.partialReplace(project, null);
+    Project actual = projectService.partialReplace(partialUpdates, null);
 
     assertNotNull(actual);
     assertEquals("project1", actual.getName());

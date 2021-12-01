@@ -11,6 +11,8 @@ import edu.demian.entities.Department;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
 import edu.demian.repositories.DepartmentRepository;
 import edu.demian.services.impl.DepartmentServiceImpl;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -73,11 +75,12 @@ public class DepartmentServiceImplTest {
 
     @Test
     final void partialReplace_DepartmentIsAlreadyExists_ReplaceGivenFields() {
-      Department department = Department.builder().description("description1_partially_updated").build();
+      Map<String, Object> partialUpdates = new HashMap<>();
+      partialUpdates.put("description", "description1_partially_updated");
 
       when(departmentRepository.findById(any())).thenReturn(Optional.ofNullable(stub));
 
-      Department actual = departmentService.partialReplace(department, null);
+      Department actual = departmentService.partialReplace(partialUpdates, null);
 
       assertNotNull(actual);
       assertEquals("department1", actual.getName());

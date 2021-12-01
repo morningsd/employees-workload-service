@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.configs.ApplicationConfig;
 import edu.demian.configs.H2JpaConfig;
 import edu.demian.entities.Department;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,16 +106,14 @@ public class DepartmentControllerIntegrationTest {
 
   @Test
   final void partialReplaceDepartment_DataExists_ReturnPartlyUpdatedInstance() throws Exception {
-    Department department =
-        Department.builder()
-            .description("description3_h2_updated_partially")
-            .build();
+    Map<String, Object> partialUpdates = new HashMap<>();
+    partialUpdates.put("description", "description3_h2_updated_partially");
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch("/departments/{id}","85123e14-e418-459e-91c0-4712fdb5170a")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(department)))
+                .content(asJsonString(partialUpdates)))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.name", is("department3_h2")))

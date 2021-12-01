@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import edu.demian.configs.ApplicationConfig;
 import edu.demian.configs.H2JpaConfig;
 import edu.demian.entities.Project;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,16 +107,14 @@ public class ProjectControllerIntegrationTest {
 
   @Test
   final void partialReplaceProject_DataExists_ReturnPartlyUpdatedInstance() throws Exception {
-    Project project =
-        Project.builder()
-            .description("description3_h2_updated_partially")
-            .build();
+    Map<String, Object> partialUpdates = new HashMap<>();
+    partialUpdates.put("description", "description3_h2_updated_partially");
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch("/projects/{id}", "8d6a78e9-7d10-41da-838a-6266d63a9d44")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(project)))
+                .content(asJsonString(partialUpdates)))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.name", is("project3_h2")))

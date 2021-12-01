@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import edu.demian.configs.ApplicationConfig;
 import edu.demian.configs.H2JpaConfig;
 import edu.demian.entities.User;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,16 +107,14 @@ public class UserControllerIntegrationTest {
 
   @Test
   final void partialReplaceDepartment_DataExists_ReturnPartlyUpdatedInstance() throws Exception {
-    User user =
-        User.builder()
-            .lastName("last3_h2_updated_partially")
-            .build();
+    Map<String, Object> partialUpdates = new HashMap<>();
+    partialUpdates.put("lastName", "last3_h2_updated_partially");
 
     mockMvc
         .perform(
             MockMvcRequestBuilders.patch("/users/{id}","8f597682-fd20-4676-a94c-85f20dbff099")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(user)))
+                .content(asJsonString(partialUpdates)))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.firstName", is("first3_h2")))
