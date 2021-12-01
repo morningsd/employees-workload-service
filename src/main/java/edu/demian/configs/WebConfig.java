@@ -33,4 +33,5 @@ public class WebConfig implements WebMvcConfigurer {
   public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
     return new Jackson2ObjectMapperBuilder();
   }
+
 }

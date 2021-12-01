@@ -1,5 +1,7 @@
 package edu.demian.services.impl;
 
+import static edu.demian.services.util.ServiceUtils.applyPatches;
+
 import edu.demian.entities.Project;
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
@@ -7,6 +9,7 @@ import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.ProjectRepository;
 import edu.demian.services.ProjectService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,15 +79,14 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Transactional
   @Override
-  public Project partialReplace(Project newProject, UUID id) {
-    Project projectToUpdate = projectRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No project with id: " + id + " was found"));
-    if (newProject.getName() != null && !newProject.getName().isEmpty()) {
-      projectToUpdate.setName(newProject.getName());
-    }
-    if (newProject.getDescription() != null && !newProject.getDescription().isEmpty()) {
-      projectToUpdate.setDescription(newProject.getDescription());
-    }
-    return projectToUpdate;
+  public Project partialReplace(Map<String, Object> partialUpdates, UUID id) {
+    Project projectToPatch =
+        projectRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("No project with id: " + id + " was found"));
+
+    return applyPatches(projectToPatch, partialUpdates, Project.class);
   }
 
   @Override

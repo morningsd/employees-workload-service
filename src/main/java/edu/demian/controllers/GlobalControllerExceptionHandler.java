@@ -34,5 +34,4 @@ public class GlobalControllerExceptionHandler {
   ExceptionInformation handleUnprocessableEntity(HttpServletRequest request, Exception exception) {
     return new ExceptionInformation(request.getRequestURL().toString(), exception);
   }
-
 }

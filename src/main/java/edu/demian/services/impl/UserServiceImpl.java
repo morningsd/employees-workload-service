@@ -1,6 +1,7 @@
 package edu.demian.services.impl;
 
-import edu.demian.entities.Department;
+import static edu.demian.services.util.ServiceUtils.applyPatches;
+
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
 import edu.demian.exceptions.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import edu.demian.repositories.UserRepository;
 import edu.demian.services.DepartmentService;
 import edu.demian.services.UserService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,31 +73,15 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public User partialReplace(User newUser, UUID id) {
-    User userToUpdate = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No user with id: " + id + " was found"));
-    String firstName = newUser.getFirstName();
-    String lastName = newUser.getLastName();
-    String email = newUser.getEmail();
-    String password = newUser.getPassword();
-    Department department = newUser.getDepartment();
-    if (firstName != null && !firstName.isEmpty()) {
-      userToUpdate.setFirstName(firstName);
-    }
-    if (lastName != null && !lastName.isEmpty()) {
-      userToUpdate.setLastName(lastName);
-    }
-    if (email != null && !email.isEmpty()) {
-      userToUpdate.setEmail(email);
-    }
-    if (password != null && !password.isEmpty()) {
-      userToUpdate.setPassword(password);
-    }
-    if (department != null) {
-      userToUpdate.setDepartment(department);
-    }
-    return userToUpdate;
-  }
+  public User partialReplace(Map<String, Object> partialUpdates, UUID id) {
+    User userToPatch =
+        userRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("No user with id: " + id + " was found"));
 
+    return applyPatches(userToPatch, partialUpdates, User.class);
+  }
 
   @Override
   public void delete(UUID id) {

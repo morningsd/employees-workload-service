@@ -41,7 +41,7 @@ public class UserController {
   @GetMapping("/{id}")
   public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
     return new ResponseEntity<>(
-        mapper.convertValue(userService.findById(id), new TypeReference<UserDTO>() {}),
+        mapper.convertValue(userService.findById(id), UserDTO.class),
         HttpStatus.OK);
   }
 
@@ -57,8 +57,9 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserDTO> register(
       @Valid @RequestBody UserCreationDTO userCreationDTO, @RequestBody UUID departmentId) {
-    User user = mapper.convertValue(userCreationDTO, new TypeReference<>() {});
+    User user = mapper.convertValue(userCreationDTO, User.class);
     userService.save(user, departmentId);
+    
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
@@ -70,17 +71,19 @@ public class UserController {
 
   @PutMapping("/{id}")
   public ResponseEntity<UserDTO> replaceUser(@Valid @RequestBody UserCreationDTO userCreationDTO, @PathVariable UUID id) {
-    User user = mapper.convertValue(userCreationDTO, new TypeReference<>() {});
+    User user = mapper.convertValue(userCreationDTO, User.class);
     return new ResponseEntity<>(
-        mapper.convertValue(userService.replace(user, id), new TypeReference<UserDTO>() {}), HttpStatus.OK);
+        mapper.convertValue(userService.replace(user, id), UserDTO.class), HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<UserDTO> partialReplaceUser(
-      @Valid @RequestBody UserCreationDTO userCreationDTO, @PathVariable UUID id) {
-    User user = mapper.convertValue(userCreationDTO, new TypeReference<>() {});
+      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(
-        mapper.convertValue(userService.partialReplace(user, id), new TypeReference<UserDTO>() {}), HttpStatus.OK);
+        mapper.convertValue(
+            userService.partialReplace(partialUpdates, id),
+            UserDTO.class),
+        HttpStatus.OK);
   }
 
   @DeleteMapping("/{id}")

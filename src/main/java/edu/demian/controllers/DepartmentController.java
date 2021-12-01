@@ -6,6 +6,7 @@ import edu.demian.dto.DepartmentDTO;
 import edu.demian.entities.Department;
 import edu.demian.services.DepartmentService;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,7 @@ public class DepartmentController {
   @GetMapping("/{id}")
   public ResponseEntity<DepartmentDTO> findById(@PathVariable UUID id) {
     return new ResponseEntity<>(
-        mapper.convertValue(departmentService.findById(id), new TypeReference<DepartmentDTO>() {}),
+        mapper.convertValue(departmentService.findById(id), DepartmentDTO.class),
         HttpStatus.OK);
   }
 
@@ -43,7 +44,7 @@ public class DepartmentController {
   public ResponseEntity<DepartmentDTO> findByName(@PathVariable String name) {
     return new ResponseEntity<>(
         mapper.convertValue(
-            departmentService.findByName(name), new TypeReference<DepartmentDTO>() {}),
+            departmentService.findByName(name), DepartmentDTO.class),
         HttpStatus.OK);
   }
 
@@ -57,29 +58,28 @@ public class DepartmentController {
 
   @PostMapping
   public ResponseEntity<DepartmentDTO> save(@Valid @RequestBody DepartmentDTO departmentDTO) {
-    Department department = mapper.convertValue(departmentDTO, new TypeReference<>() {});
+    Department department = mapper.convertValue(departmentDTO, Department.class);
     return new ResponseEntity<>(
-        mapper.convertValue(departmentService.save(department), new TypeReference<DepartmentDTO>() {}), HttpStatus.OK);
+        mapper.convertValue(departmentService.save(department), DepartmentDTO.class), HttpStatus.OK);
   }
 
   @PutMapping("/{id}")
   public ResponseEntity<DepartmentDTO> replaceDepartment(
-      @Valid @RequestBody DepartmentDTO departmentDTO, @PathVariable UUID id) {
-    Department department = mapper.convertValue(departmentDTO, new TypeReference<>() {});
+      @RequestBody DepartmentDTO departmentDTO, @PathVariable UUID id) {
+    Department department = mapper.convertValue(departmentDTO, Department.class);
     return new ResponseEntity<>(
         mapper.convertValue(
-            departmentService.replace(department, id), new TypeReference<DepartmentDTO>() {}),
+            departmentService.replace(department, id), DepartmentDTO.class),
         HttpStatus.OK);
   }
 
   @PatchMapping("/{id}")
   public ResponseEntity<DepartmentDTO> partialReplaceDepartment(
-      @Valid @RequestBody DepartmentDTO departmentDTO, @PathVariable UUID id) {
-    Department department = mapper.convertValue(departmentDTO, new TypeReference<>() {});
+      @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(
         mapper.convertValue(
-            departmentService.partialReplace(department, id),
-            new TypeReference<DepartmentDTO>() {}),
+            departmentService.partialReplace(partialUpdates, id),
+            DepartmentDTO.class),
         HttpStatus.OK);
   }
 

@@ -1,14 +1,14 @@
 package edu.demian.services.impl;
 
+import static edu.demian.services.util.ServiceUtils.applyPatches;
+
 import edu.demian.entities.Department;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
-import edu.demian.exceptions.ResourceHasNoSuchPropertyException;
 import edu.demian.exceptions.ResourceNotFoundException;
 import edu.demian.repositories.DepartmentRepository;
 import edu.demian.services.DepartmentService;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +36,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   public Department findByName(String name) {
-    return departmentRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("No department with name: " + name + " was found"));
+    return departmentRepository
+        .findByName(name)
+        .orElseThrow(
+            () -> new ResourceNotFoundException("No department with name: " + name + " was found"));
   }
 
   @Override
@@ -71,17 +74,14 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Transactional
   @Override
-  public Department partialReplace(Department newDepartment, UUID id) {
-    Department departmentToUpdate = departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No department with id: " + id + " was found"));
-    String name = newDepartment.getName();
-    String description = newDepartment.getDescription();
-    if (name != null && !name.isEmpty()) {
-      departmentToUpdate.setName(name);
-    }
-    if (description != null && !description.isEmpty()) {
-      departmentToUpdate.setDescription(description);
-    }
-    return departmentToUpdate;
+  public Department partialReplace(Map<String, Object> partialUpdates, UUID id) {
+    Department departmentToPatch =
+        departmentRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("No department with id: " + id + " was found"));
+
+    return applyPatches(departmentToPatch, partialUpdates, Department.class);
   }
 
   @Override
