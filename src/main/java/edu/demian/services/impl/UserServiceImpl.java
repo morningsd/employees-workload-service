@@ -20,8 +20,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final DepartmentService departmentService;
 
-  public UserServiceImpl(UserRepository userRepository,
-      DepartmentService departmentService) {
+  public UserServiceImpl(UserRepository userRepository, DepartmentService departmentService) {
     this.userRepository = userRepository;
     this.departmentService = departmentService;
   }
@@ -84,8 +83,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public User findByEmail(String email) {
+    return userRepository
+        .findByEmail(email)
+        .orElseThrow(() -> new ResourceNotFoundException("No user with given email was found"));
+  }
+
+  @Override
   public void delete(UUID id) {
     userRepository.deleteById(id);
   }
-
 }

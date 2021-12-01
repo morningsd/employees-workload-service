@@ -1,6 +1,5 @@
 package edu.demian.dto;
 
-import java.util.Set;
 import java.util.UUID;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,9 +9,6 @@ import lombok.Data;
 
 @Data
 public class UserCreationDTO {
-
-  @NotNull
-  private UUID id;
 
   @NotNull
   @Size(min = 2, max = 255)
@@ -31,6 +27,5 @@ public class UserCreationDTO {
   @Size(max = 255)
   private String password;
 
-  private DepartmentDTO department;
-
+  private UUID departmentId;
 }
