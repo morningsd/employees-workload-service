@@ -48,7 +48,6 @@ public class UserController {
   @GetMapping
   public ResponseEntity<List<UserDTO>> findAll() {
     List<User> all = userService.findAll();
-    System.out.println(all);
     return new ResponseEntity<>(
         mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}), HttpStatus.OK);
   }

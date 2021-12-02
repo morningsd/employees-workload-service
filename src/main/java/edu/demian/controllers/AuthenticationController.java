@@ -2,6 +2,7 @@ package edu.demian.controllers;
 
 import edu.demian.dto.auth.AuthenticationRequestDTO;
 import edu.demian.dto.auth.AuthenticationResponseDTO;
+import edu.demian.exceptions.JwtAuthenticationException;
 import edu.demian.security.jwt.JwtTokenProvider;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,19 +26,24 @@ public class AuthenticationController {
   private final JwtTokenProvider tokenProvider;
 
   public AuthenticationController(
-      AuthenticationManager authenticationManager,
-      JwtTokenProvider tokenProvider) {
+      AuthenticationManager authenticationManager, JwtTokenProvider tokenProvider) {
     this.authenticationManager = authenticationManager;
     this.tokenProvider = tokenProvider;
   }
 
   @PostMapping("/login")
-  public ResponseEntity<AuthenticationResponseDTO> login(@Valid @RequestBody AuthenticationRequestDTO requestDTO) {
-    String email = requestDTO.getEmail();
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, requestDTO.getPassword()));
-    String token = tokenProvider.createToken(email);
+  public ResponseEntity<AuthenticationResponseDTO> login(
+      @Valid @RequestBody AuthenticationRequestDTO requestDTO) {
+    try {
+      String email = requestDTO.getEmail();
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(email, requestDTO.getPassword()));
+      String token = tokenProvider.createToken(email);
+      return new ResponseEntity<>(new AuthenticationResponseDTO(email, token), HttpStatus.OK);
+    } catch (AuthenticationException e) {
+      throw new JwtAuthenticationException("Invalid username or password");
+    }
 
-    return new ResponseEntity<>(new AuthenticationResponseDTO(email, token), HttpStatus.OK);
   }
 
   @PostMapping("/logout")
@@ -45,5 +52,4 @@ public class AuthenticationController {
     securityContextLogoutHandler.logout(request, response, null);
     return ResponseEntity.ok().build();
   }
-
 }

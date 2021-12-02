@@ -1,6 +1,8 @@
 package edu.demian.security.jwt;
 
+import edu.demian.exceptions.JwtAuthenticationException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.Instant;
@@ -58,12 +60,16 @@ public class JwtTokenProvider {
   }
 
   public boolean isTokenValid(String token) {
+    try {
     return Jwts.parser()
         .setSigningKey(jwtSecretKey)
         .parseClaimsJws(token)
         .getBody()
         .getExpiration()
         .after(new Date());
+    } catch (JwtException | IllegalArgumentException e) {
+      throw new JwtAuthenticationException("Invalid authentication token");
+    }
   }
 
   public String getEmail(String token) {
