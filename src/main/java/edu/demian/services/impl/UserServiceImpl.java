@@ -11,6 +11,8 @@ import edu.demian.services.UserService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +37,8 @@ public class UserServiceImpl implements UserService {
                   "User with this email: " + userFromDb.getEmail() + " already exists");
             });
 
-    departmentService.findById(departmentId); // TODO make some check method
+//    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    //    departmentService.findById(departmentId); // TODO make some check method
     return userRepository.save(user);
   }
 

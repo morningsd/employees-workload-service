@@ -77,7 +77,6 @@ public class UserServiceImplTest {
   @Test
   final void save_NoSuchUserYet_ReturnSavedInstance() {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-    when(departmentService.findById(any())).thenReturn(new Department());
     when(userRepository.save(any())).thenReturn(stub);
 
     User actual = userService.save(stub, null);
