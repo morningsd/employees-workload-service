@@ -7,5 +7,5 @@ public interface UserProjectService {
 
   UserProject save(UserProject userProject);
 
-  void addProjectToUser(UUID userId, UUID projectId);
+  void addProjectToUser(UserProject userProject);
 }

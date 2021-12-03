@@ -15,6 +15,8 @@ public interface UserService {
 
   List<User> findAll();
 
+  List<User> findAllAvailableNow();
+
   User findById(UUID id);
 
   User replace(User user, UUID id);

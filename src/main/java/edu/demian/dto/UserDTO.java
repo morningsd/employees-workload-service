@@ -33,6 +33,4 @@ public class UserDTO {
 
   private DepartmentDTO department;
 
-  private Set<UserProjectDTO> projects;
-
 }

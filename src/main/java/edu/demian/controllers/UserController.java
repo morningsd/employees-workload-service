@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.dto.UserCreationDTO;
 import edu.demian.dto.UserDTO;
-import edu.demian.dto.UserProjectIdDTO;
+import edu.demian.dto.UserProjectDTO;
 import edu.demian.entities.User;
+import edu.demian.entities.UserProject;
+import edu.demian.entities.UserProjectId;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
@@ -56,11 +58,20 @@ public class UserController {
         mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}), HttpStatus.OK);
   }
 
+  @GetMapping("/available")
+  public ResponseEntity<List<UserDTO>> findAllAvailableNow() {
+    List<User> available = userService.findAllAvailableNow();
+    return new ResponseEntity<>(
+        mapper.convertValue(available, new TypeReference<List<UserDTO>>() {}),
+        HttpStatus.OK
+    );
+  }
+
   @PostMapping
   public ResponseEntity<UserDTO> save(@Valid @RequestBody UserCreationDTO userCreationDTO) {
     User user = mapper.convertValue(userCreationDTO, User.class);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    userService.save(user, userCreationDTO.getDepartmentId());
+    userService.save(user);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
@@ -73,9 +84,10 @@ public class UserController {
   }
 
   @PostMapping("/add-project")
-  public ResponseEntity<Void> addProject(@Valid @RequestBody UserProjectIdDTO userProjectIdDTO) {
-    userProjectService.addProjectToUser(
-        userProjectIdDTO.getUserId(), userProjectIdDTO.getProjectId());
+  public ResponseEntity<Void> addProject(@Valid @RequestBody UserProjectDTO userProjectDTO) {
+    UserProject userProject = mapper.convertValue(userProjectDTO, UserProject.class);
+    userProject.setId(mapper.convertValue(userProjectDTO.getUserProjectId(), UserProjectId.class));
+    userProjectService.addProjectToUser(userProject);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
