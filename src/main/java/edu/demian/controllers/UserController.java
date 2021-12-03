@@ -42,36 +42,41 @@ public class UserController {
   @GetMapping("/{id}")
   public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
     return new ResponseEntity<>(
-        mapper.convertValue(userService.findById(id), UserDTO.class),
-        HttpStatus.OK);
+        mapper.convertValue(userService.findById(id), UserDTO.class), HttpStatus.OK);
   }
 
   @GetMapping
   public ResponseEntity<List<UserDTO>> findAll() {
     List<User> all = userService.findAll();
-    System.out.println(all);
     return new ResponseEntity<>(
-        mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}),
-        HttpStatus.OK);
+        mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}), HttpStatus.OK);
   }
 
   @PostMapping
-  public ResponseEntity<UserDTO> register(
-      @Valid @RequestBody UserCreationDTO userCreationDTO, @RequestBody UUID departmentId) {
+  public ResponseEntity<UserDTO> save(@Valid @RequestBody UserCreationDTO userCreationDTO) {
     User user = mapper.convertValue(userCreationDTO, User.class);
-    userService.save(user, departmentId);
-    
+    userService.save(user);
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  @PostMapping("/{id}")
+  public ResponseEntity<UserDTO> setDepartment(@PathVariable UUID id, @RequestBody UUID departmentId) {
+    return new ResponseEntity<>(
+        mapper.convertValue(userService.setDepartment(id, departmentId), UserDTO.class),
+        HttpStatus.OK
+    );
   }
 
   @PostMapping("/add-project")
   public ResponseEntity<Void> addProject(@Valid @RequestBody UserProjectIdDTO userProjectIdDTO) {
-    userProjectService.addProjectToUser(userProjectIdDTO.getUserId(), userProjectIdDTO.getProjectId());
+    userProjectService.addProjectToUser(
+        userProjectIdDTO.getUserId(), userProjectIdDTO.getProjectId());
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<UserDTO> replaceUser(@Valid @RequestBody UserCreationDTO userCreationDTO, @PathVariable UUID id) {
+  public ResponseEntity<UserDTO> replaceUser(
+      @Valid @RequestBody UserCreationDTO userCreationDTO, @PathVariable UUID id) {
     User user = mapper.convertValue(userCreationDTO, User.class);
     return new ResponseEntity<>(
         mapper.convertValue(userService.replace(user, id), UserDTO.class), HttpStatus.OK);
@@ -81,9 +86,7 @@ public class UserController {
   public ResponseEntity<UserDTO> partialReplaceUser(
       @RequestBody Map<String, Object> partialUpdates, @PathVariable UUID id) {
     return new ResponseEntity<>(
-        mapper.convertValue(
-            userService.partialReplace(partialUpdates, id),
-            UserDTO.class),
+        mapper.convertValue(userService.partialReplace(partialUpdates, id), UserDTO.class),
         HttpStatus.OK);
   }
 

@@ -2,6 +2,7 @@ package edu.demian.services.impl;
 
 import static edu.demian.services.util.ServiceUtils.applyPatches;
 
+import edu.demian.entities.Department;
 import edu.demian.entities.User;
 import edu.demian.exceptions.ResourceAlreadyExistsException;
 import edu.demian.exceptions.ResourceNotFoundException;
@@ -20,14 +21,13 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final DepartmentService departmentService;
 
-  public UserServiceImpl(UserRepository userRepository,
-      DepartmentService departmentService) {
+  public UserServiceImpl(UserRepository userRepository, DepartmentService departmentService) {
     this.userRepository = userRepository;
     this.departmentService = departmentService;
   }
 
   @Override
-  public User save(User user, UUID departmentId) {
+  public User save(User user) {
     userRepository
         .findByEmail(user.getEmail())
         .ifPresent(
@@ -36,8 +36,16 @@ public class UserServiceImpl implements UserService {
                   "User with this email: " + userFromDb.getEmail() + " already exists");
             });
 
-    departmentService.findById(departmentId); // TODO make some check method
     return userRepository.save(user);
+  }
+
+  @Transactional
+  @Override
+  public User setDepartment(UUID userId, UUID departmentId) {
+    User user = findById(userId);
+    Department department = departmentService.findById(departmentId);
+    user.setDepartment(department);
+    return user;
   }
 
   @Override
@@ -84,8 +92,14 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public User findByEmail(String email) {
+    return userRepository
+        .findByEmail(email)
+        .orElseThrow(() -> new ResourceNotFoundException("No user with given email was found"));
+  }
+
+  @Override
   public void delete(UUID id) {
     userRepository.deleteById(id);
   }
-
 }

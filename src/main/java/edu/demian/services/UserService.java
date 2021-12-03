@@ -7,7 +7,11 @@ import java.util.UUID;
 
 public interface UserService {
 
-  User save(User user, UUID departmentId);
+  User save(User user);
+
+  User setDepartment(UUID userId, UUID departmentId);
+
+  User findByEmail(String email);
 
   List<User> findAll();
 
