@@ -1,6 +1,5 @@
 package edu.demian.dto;
 
-import java.util.UUID;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -26,6 +25,4 @@ public class UserCreationDTO {
   @NotBlank
   @Size(max = 255)
   private String password;
-
-  private UUID departmentId;
 }

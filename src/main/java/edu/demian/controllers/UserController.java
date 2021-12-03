@@ -53,11 +53,18 @@ public class UserController {
   }
 
   @PostMapping
-  public ResponseEntity<UserDTO> register(
-      @Valid @RequestBody UserCreationDTO userCreationDTO) {
+  public ResponseEntity<UserDTO> save(@Valid @RequestBody UserCreationDTO userCreationDTO) {
     User user = mapper.convertValue(userCreationDTO, User.class);
-    userService.save(user, userCreationDTO.getDepartmentId());
+    userService.save(user);
     return new ResponseEntity<>(HttpStatus.CREATED);
+  }
+
+  @PostMapping("/{id}")
+  public ResponseEntity<UserDTO> setDepartment(@PathVariable UUID id, @RequestBody UUID departmentId) {
+    return new ResponseEntity<>(
+        mapper.convertValue(userService.setDepartment(id, departmentId), UserDTO.class),
+        HttpStatus.OK
+    );
   }
 
   @PostMapping("/add-project")
