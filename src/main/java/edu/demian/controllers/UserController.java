@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,12 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UserController {
 
+  private final BCryptPasswordEncoder passwordEncoder;
   private final ObjectMapper mapper;
   private final UserService userService;
   private final UserProjectService userProjectService;
 
   public UserController(
+      BCryptPasswordEncoder passwordEncoder,
       ObjectMapper mapper, UserService userService, UserProjectService userProjectService) {
+    this.passwordEncoder = passwordEncoder;
     this.mapper = mapper;
     this.userService = userService;
     this.userProjectService = userProjectService;
@@ -55,7 +59,8 @@ public class UserController {
   @PostMapping
   public ResponseEntity<UserDTO> save(@Valid @RequestBody UserCreationDTO userCreationDTO) {
     User user = mapper.convertValue(userCreationDTO, User.class);
-    userService.save(user);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    userService.save(user, userCreationDTO.getDepartmentId());
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 

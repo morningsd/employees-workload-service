@@ -26,6 +26,7 @@
     <postgresql.version>42.3.1</postgresql.version>
     <poi.ooxml.version>5.1.0</poi.ooxml.version>
     <opencsv.version>5.5.2</opencsv.version>
+    <liquibase.version>4.6.1</liquibase.version>
     <json.web.token.version>0.9.1</json.web.token.version>
     <lombok.version>1.18.22</lombok.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
@@ -109,6 +110,12 @@
       <groupId>org.springframework.data</groupId>
       <artifactId>spring-data-jpa</artifactId>
       <version>${spring.data.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>${liquibase.version}</version>
     </dependency>
 
     <dependency>
@@ -224,6 +231,14 @@
     <finalName>employees-workload-service</finalName>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-maven-plugin</artifactId>
+          <version>${liquibase.version}</version>
+          <configuration>
+            <propertyFile>src/main/resources/application.properties</propertyFile>
+          </configuration>
+        </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>

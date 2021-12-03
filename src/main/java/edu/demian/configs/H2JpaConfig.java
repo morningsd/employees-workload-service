@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -73,5 +74,12 @@ public class H2JpaConfig {
     return new PersistenceExceptionTranslationPostProcessor();
   }
 
+  @Bean
+  public SpringLiquibase liquibase() {
+    SpringLiquibase liquibase = new SpringLiquibase();
+    liquibase.setChangeLog(env.getProperty("liquibase.change-log"));
+    liquibase.setDataSource(dataSource());
+    return liquibase;
+  }
 }
 
