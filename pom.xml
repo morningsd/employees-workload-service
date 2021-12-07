@@ -32,8 +32,8 @@
     <commons.fileupload.version>1.4</commons.fileupload.version>
     <lombok.version>1.18.22</lombok.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
-    <h2.version>2.0.202</h2.version>
-    <junit.version>5.8.2</junit.version>
+    <h2.version>1.4.200</h2.version>
+    <junit.version>5.8.1</junit.version>
     <mockito.version>4.1.0</mockito.version>
     <mockito.junit.version>4.1.0</mockito.junit.version>
     <jayway.jsonpath.version>2.6.0</jayway.jsonpath.version>
