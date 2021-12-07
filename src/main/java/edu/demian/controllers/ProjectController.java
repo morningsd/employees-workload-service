@@ -3,11 +3,8 @@ package edu.demian.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.dto.ProjectDTO;
-import edu.demian.dto.UserProjectDTO;
 import edu.demian.entities.Project;
-import edu.demian.entities.UserProject;
 import edu.demian.services.ProjectService;
-import edu.demian.services.UserProjectService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,13 +27,11 @@ public class ProjectController {
 
   private final ObjectMapper mapper;
   private final ProjectService projectService;
-  private final UserProjectService userProjectService;
 
   public ProjectController(
-      ObjectMapper mapper, ProjectService projectService, UserProjectService userProjectService) {
+      ObjectMapper mapper, ProjectService projectService) {
     this.mapper = mapper;
     this.projectService = projectService;
-    this.userProjectService = userProjectService;
   }
 
   @GetMapping("/{id}")

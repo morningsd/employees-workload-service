@@ -1,6 +1,7 @@
 package edu.demian.repositories;
 
 import edu.demian.entities.User;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -21,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
   @Query(
       value =
-          "select u.id, u.first_name, u.last_name, u.email, u.password, u.department_id from usr u where not exists(select null from user_project up where up.user_id = u.id and up.position_end_date > now())",
+          "select u.id, u.first_name, u.last_name, u.email, u.password, u.department_id from usr u where not exists(select null from user_project up where up.user_id = u.id and up.position_end_date > ?1)",
       nativeQuery = true)
-  List<User> findUsersAvailableNow();
+  List<User> findUsersAvailableWithinNextCoupleOfDays(Instant fromData);
 }

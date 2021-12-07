@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +26,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -61,6 +64,15 @@ public class UserController {
   @GetMapping("/available")
   public ResponseEntity<List<UserDTO>> findAllAvailableNow() {
     List<User> available = userService.findAllAvailableNow();
+    return new ResponseEntity<>(
+        mapper.convertValue(available, new TypeReference<List<UserDTO>>() {}),
+        HttpStatus.OK
+    );
+  }
+
+  @GetMapping("/available/{days}")
+  public ResponseEntity<List<UserDTO>> findAllAvailableWithinCoupleOfDays(@PathVariable int days) {
+    List<User> available = userService.findAllAvailableWithinCoupleOfDays(days);
     return new ResponseEntity<>(
         mapper.convertValue(available, new TypeReference<List<UserDTO>>() {}),
         HttpStatus.OK
@@ -110,6 +122,12 @@ public class UserController {
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable UUID id) {
     userService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  public ResponseEntity<Void> uploadFromCsv(@RequestParam("file") MultipartFile file) {
+    userService.uploadFromCsv(file);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }
