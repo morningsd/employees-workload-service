@@ -1,14 +1,13 @@
 package edu.demian.dto;
 
+import edu.demian.entities.UserProjectId;
 import java.time.LocalDate;
 import lombok.Data;
 
 @Data
 public class UserProjectDTO {
 
-  private UserProjectIdDTO id;
-
-  private ProjectDTO project;
+  private UserProjectId userProjectId;
 
   private int workingHours;
 

@@ -4,6 +4,7 @@ import edu.demian.entities.User;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
@@ -15,6 +16,10 @@ public interface UserService {
 
   List<User> findAll();
 
+  List<User> findAllAvailableNow();
+
+  List<User> findAllAvailableWithinCoupleOfDays(int days);
+
   User findById(UUID id);
 
   User replace(User user, UUID id);
@@ -22,4 +27,6 @@ public interface UserService {
   User partialReplace(Map<String, Object> partialUpdates, UUID id);
 
   void delete(UUID id);
+
+  void uploadFromCsv(MultipartFile file);
 }

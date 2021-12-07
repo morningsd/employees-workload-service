@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.dto.ProjectDTO;
 import edu.demian.entities.Project;
 import edu.demian.services.ProjectService;
-import edu.demian.services.UserProjectService;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,13 +27,11 @@ public class ProjectController {
 
   private final ObjectMapper mapper;
   private final ProjectService projectService;
-  private final UserProjectService userProjectService;
 
   public ProjectController(
-      ObjectMapper mapper, ProjectService projectService, UserProjectService userProjectService) {
+      ObjectMapper mapper, ProjectService projectService) {
     this.mapper = mapper;
     this.projectService = projectService;
-    this.userProjectService = userProjectService;
   }
 
   @GetMapping("/{id}")
@@ -64,12 +61,6 @@ public class ProjectController {
     return new ResponseEntity<>(
         mapper.convertValue(projectService.findByName(name), ProjectDTO.class),
         HttpStatus.OK);
-  }
-
-  @PostMapping("/add-user")
-  public ResponseEntity<Void> addUser(@RequestBody UUID userId, @RequestBody UUID projectId) {
-    userProjectService.addProjectToUser(userId, projectId);
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @PutMapping("/{id}")

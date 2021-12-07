@@ -44,6 +44,9 @@ public class DepartmentControllerIntegrationTest {
   @Autowired
   private WebApplicationContext webApplicationContext;
 
+//  @Autowired
+//  private FilterChainProxy springSecurityFilterChain;
+
   @Autowired
   private DepartmentController departmentController;
 
@@ -51,8 +54,10 @@ public class DepartmentControllerIntegrationTest {
   @BeforeEach
   public void setUp() {
     mockMvc = MockMvcBuilders
+//        .webAppContextSetup(webApplicationContext)
         .standaloneSetup(departmentController)
         .setControllerAdvice(new GlobalControllerExceptionHandler())
+//        .addFilter(springSecurityFilterChain)
         .build();
   }
 

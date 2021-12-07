@@ -2,7 +2,6 @@ package edu.demian.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import java.time.LocalDate;
@@ -49,12 +48,12 @@ public class UserProject {
 
   @Column(name = "position_start_date", nullable = false)
   @JsonDeserialize(using = LocalDateDeserializer.class)
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd ")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate positionStartDate;
 
   @Column(name = "position_end_date", nullable = false)
   @JsonDeserialize(using = LocalDateDeserializer.class)
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd ")
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate positionEndDate;
 
   @Override
