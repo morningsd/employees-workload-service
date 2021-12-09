@@ -1,5 +1,6 @@
 package edu.demian.repositories;
 
+import edu.demian.dto.reports.EmployeesProjectOccupation;
 import edu.demian.entities.User;
 import java.time.Instant;
 import java.util.List;
@@ -16,13 +17,19 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
   @Query(
       value =
-          "SELECT * FROM usr u JOIN user_project up ON u.id = up.user_id WHERE up.project_id = ?1",
+          "SELECT u.* FROM usr u JOIN user_project up ON u.id = up.user_id WHERE up.project_id = ?1",
       nativeQuery = true)
   List<User> findUsersByUserProjectsProjectId(UUID projectId);
 
   @Query(
       value =
-          "select u.id, u.first_name, u.last_name, u.email, u.password, u.department_id from usr u where not exists(select null from user_project up where up.user_id = u.id and up.position_end_date > ?1)",
+          "select u.* from usr u left join user_project on user_project.user_id = u.id and user_project.position_end_date > ?1 where user_project.project_id is null",
       nativeQuery = true)
   List<User> findUsersAvailableWithinNextCoupleOfDays(Instant fromData);
+
+  @Query(
+      value =
+          "select new edu.demian.dto.reports.EmployeesProjectOccupation(u.firstName, u.lastName, d.name, p.name, up.workingHours) from UserProject up left join up.user u left join u.department d left join up.project p"
+  )
+  List<EmployeesProjectOccupation> getDataForEmployeesWorkloadByDepartmentOnMonthlyBasis();
 }

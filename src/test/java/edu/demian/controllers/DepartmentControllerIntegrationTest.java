@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.configs.ApplicationConfig;
 import edu.demian.configs.H2JpaConfig;
 import edu.demian.entities.Department;
+import edu.demian.security.jwt.JwtTokenFilter;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
@@ -44,8 +45,8 @@ public class DepartmentControllerIntegrationTest {
   @Autowired
   private WebApplicationContext webApplicationContext;
 
-//  @Autowired
-//  private FilterChainProxy springSecurityFilterChain;
+  @Autowired
+  private JwtTokenFilter jwtTokenFilter;
 
   @Autowired
   private DepartmentController departmentController;
@@ -54,10 +55,10 @@ public class DepartmentControllerIntegrationTest {
   @BeforeEach
   public void setUp() {
     mockMvc = MockMvcBuilders
-//        .webAppContextSetup(webApplicationContext)
-        .standaloneSetup(departmentController)
-        .setControllerAdvice(new GlobalControllerExceptionHandler())
-//        .addFilter(springSecurityFilterChain)
+        .webAppContextSetup(webApplicationContext)
+//        .standaloneSetup(departmentController)
+//        .setControllerAdvice(new GlobalControllerExceptionHandler())
+        .addFilter(jwtTokenFilter)
         .build();
   }
 
