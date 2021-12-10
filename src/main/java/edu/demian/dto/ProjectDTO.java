@@ -1,6 +1,5 @@
 package edu.demian.dto;
 
-import java.util.Set;
 import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

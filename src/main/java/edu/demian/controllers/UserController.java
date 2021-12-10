@@ -4,15 +4,20 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.demian.dto.UserCreationDTO;
 import edu.demian.dto.UserDTO;
-import edu.demian.dto.UserProjectIdDTO;
+import edu.demian.dto.UserProjectDTO;
 import edu.demian.entities.User;
+import edu.demian.entities.UserProject;
+import edu.demian.entities.UserProjectId;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +28,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
@@ -56,11 +63,21 @@ public class UserController {
         mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}), HttpStatus.OK);
   }
 
+  @GetMapping(value = {"/available/{days}", "/available"})
+  public ResponseEntity<List<UserDTO>> findAllAvailableWithinCoupleOfDays(@PathVariable Optional<Integer> days) {
+    int daysValue = days.orElse(0);
+    List<User> available = userService.findAllAvailableWithinCoupleOfDays(daysValue);
+    return new ResponseEntity<>(
+        mapper.convertValue(available, new TypeReference<List<UserDTO>>() {}),
+        HttpStatus.OK
+    );
+  }
+
   @PostMapping
   public ResponseEntity<UserDTO> save(@Valid @RequestBody UserCreationDTO userCreationDTO) {
     User user = mapper.convertValue(userCreationDTO, User.class);
     user.setPassword(passwordEncoder.encode(user.getPassword()));
-    userService.save(user, userCreationDTO.getDepartmentId());
+    userService.save(user);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
@@ -73,9 +90,10 @@ public class UserController {
   }
 
   @PostMapping("/add-project")
-  public ResponseEntity<Void> addProject(@Valid @RequestBody UserProjectIdDTO userProjectIdDTO) {
-    userProjectService.addProjectToUser(
-        userProjectIdDTO.getUserId(), userProjectIdDTO.getProjectId());
+  public ResponseEntity<Void> addProject(@Valid @RequestBody UserProjectDTO userProjectDTO) {
+    UserProject userProject = mapper.convertValue(userProjectDTO, UserProject.class);
+    userProject.setId(mapper.convertValue(userProjectDTO.getUserProjectId(), UserProjectId.class));
+    userProjectService.addProjectToUser(userProject);
     return new ResponseEntity<>(HttpStatus.CREATED);
   }
 
@@ -98,6 +116,12 @@ public class UserController {
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable UUID id) {
     userService.delete(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @PostMapping(value = "/upload", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+  public ResponseEntity<Void> uploadFromCsv(@RequestParam("file") MultipartFile file) {
+    userService.uploadFromCsv(file);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

@@ -8,7 +8,6 @@ import edu.demian.repositories.UserProjectRepository;
 import edu.demian.services.ProjectService;
 import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
-import java.time.LocalDate;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,22 +35,15 @@ public class UserProjectServiceImpl implements UserProjectService {
 
   @Override
   @Transactional
-  public void addProjectToUser(UUID userId, UUID projectId) {
+  public void addProjectToUser(UserProject userProject) {
+    UUID userId = userProject.getId().getUserId();
+    UUID projectId = userProject.getId().getProjectId();
     User user = userService.findById(userId);
     Project project = projectService.findById(projectId);
 
-    UserProjectId id = new UserProjectId(userId, projectId);
-    UserProject userProject = new UserProject();
-    userProject.setId(id);
     userProject.setUser(user);
     userProject.setProject(project);
-    userProject.setPositionEndDate(LocalDate.now());
-    userProject.setPositionStartDate(LocalDate.now());
-    userProject.setWorkingHours(8);
 
-    user.getProjects().add(userProject);
-
-    System.out.println(user);
     userProjectRepository.save(userProject);
   }
 }

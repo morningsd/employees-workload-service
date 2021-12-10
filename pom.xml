@@ -17,6 +17,7 @@
     <maven.compiler.target>11</maven.compiler.target>
     <spring.version>5.3.13</spring.version>
     <spring.security>5.6.0</spring.security>
+    <spring.security.test>5.6.0</spring.security.test>
     <jackson.version>2.13.0</jackson.version>
     <jackson.jsr310.version>2.13.0</jackson.jsr310.version>
     <spring.data.version>2.6.0</spring.data.version>
@@ -25,9 +26,11 @@
     <hibernate.validator.version>7.0.1.Final</hibernate.validator.version>
     <postgresql.version>42.3.1</postgresql.version>
     <poi.ooxml.version>5.1.0</poi.ooxml.version>
+    <commons.io.version>2.11.0</commons.io.version>
     <opencsv.version>5.5.2</opencsv.version>
     <liquibase.version>4.6.1</liquibase.version>
     <json.web.token.version>0.9.1</json.web.token.version>
+    <commons.fileupload.version>1.4</commons.fileupload.version>
     <lombok.version>1.18.22</lombok.version>
     <javax.servlet.version>4.0.1</javax.servlet.version>
     <h2.version>1.4.200</h2.version>
@@ -95,6 +98,19 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <version>${spring.security.test}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>${commons.fileupload.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
@@ -146,6 +162,12 @@
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
       <version>${poi.ooxml.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons.io.version}</version>
     </dependency>
 
     <dependency>

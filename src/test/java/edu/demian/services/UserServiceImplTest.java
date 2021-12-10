@@ -49,7 +49,7 @@ public class UserServiceImplTest {
 
     assertThrows(
         ResourceAlreadyExistsException.class,
-        () -> userService.save(stub, null),
+        () -> userService.save(stub),
         "There shouldn't be 2 equal user objects");
   }
 
@@ -79,7 +79,7 @@ public class UserServiceImplTest {
     when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
     when(userRepository.save(any())).thenReturn(stub);
 
-    User actual = userService.save(stub, null);
+    User actual = userService.save(stub);
 
     assertNotNull(actual);
     assertEquals("First", actual.getFirstName());
