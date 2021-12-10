@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public List<User> findAllAvailableWithinCoupleOfDays(int days) {
     if (days < 0) {
-      throw new InvalidInputDataException("Can't process negative number of days");
+      days = 0;
     }
     Instant fromDate = Instant.now().plus(days, ChronoUnit.DAYS);
     return userRepository.findUsersAvailableWithinNextCoupleOfDays(fromDate);

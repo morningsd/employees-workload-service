@@ -1,6 +1,7 @@
 package edu.demian.controllers;
 
-import static edu.demian.jobs.EmployeesExcelReportsJob.currentReportFile;
+import static edu.demian.jobs.EmployeesExcelReportsJob.currentReportFileEmployeesAvailable;
+import static edu.demian.jobs.EmployeesExcelReportsJob.currentReportFileEmployeesWorkload;
 
 import edu.demian.exceptions.ExcelReportGenerationException;
 import java.io.FileInputStream;
@@ -17,18 +18,38 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @RequestMapping("/reports")
 public class ExcelReportsController {
 
-  @GetMapping("/occupation")
-  public StreamingResponseBody sendEmployeesOccupationReport(HttpServletResponse response) {
+  @GetMapping("/workload")
+  public StreamingResponseBody sendEmployeesWorkloadReport(HttpServletResponse response) {
     response.setContentType("text/html;charset=UTF-8");
-    response.setHeader("Content-Disposition", "attachment; filename=\"report.xlsx\"");
+    response.setHeader("Content-Disposition", "attachment; filename=\"report-workload.xlsx\"");
 
     InputStream inputStream;
     try {
-      inputStream = new FileInputStream(currentReportFile);
+      inputStream = new FileInputStream(currentReportFileEmployeesWorkload);
     } catch (FileNotFoundException e) {
-      throw new ExcelReportGenerationException("Can't upload report --" + new Date());
+      throw new ExcelReportGenerationException("Can't upload report[workload] --" + new Date());
     }
 
+    return getStreamingResponseBody(inputStream);
+  }
+
+  @GetMapping("available")
+  public StreamingResponseBody sendEmployeesAvailableReport(HttpServletResponse response) {
+    response.setContentType("text/html;charset=UTF-8");
+    response.setHeader("Content-Disposition", "attachment; filename=\"report-available.xlsx\"");
+
+
+    InputStream inputStream;
+    try {
+      inputStream = new FileInputStream(currentReportFileEmployeesAvailable);
+    } catch (FileNotFoundException e) {
+      throw new ExcelReportGenerationException("Can't upload report[available] --" + new Date());
+    }
+
+    return getStreamingResponseBody(inputStream);
+  }
+
+  private StreamingResponseBody getStreamingResponseBody(InputStream inputStream) {
     return outputStream -> {
       int nRead;
       byte[] data = new byte[1024];

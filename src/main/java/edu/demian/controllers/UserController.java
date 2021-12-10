@@ -12,6 +12,8 @@ import edu.demian.services.UserProjectService;
 import edu.demian.services.UserService;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -61,18 +63,10 @@ public class UserController {
         mapper.convertValue(all, new TypeReference<List<UserDTO>>() {}), HttpStatus.OK);
   }
 
-  @GetMapping("/available")
-  public ResponseEntity<List<UserDTO>> findAllAvailableNow() {
-    List<User> available = userService.findAllAvailableNow();
-    return new ResponseEntity<>(
-        mapper.convertValue(available, new TypeReference<List<UserDTO>>() {}),
-        HttpStatus.OK
-    );
-  }
-
-  @GetMapping("/available/{days}")
-  public ResponseEntity<List<UserDTO>> findAllAvailableWithinCoupleOfDays(@PathVariable int days) {
-    List<User> available = userService.findAllAvailableWithinCoupleOfDays(days);
+  @GetMapping(value = {"/available/{days}", "/available"})
+  public ResponseEntity<List<UserDTO>> findAllAvailableWithinCoupleOfDays(@PathVariable Optional<Integer> days) {
+    int daysValue = days.orElse(0);
+    List<User> available = userService.findAllAvailableWithinCoupleOfDays(daysValue);
     return new ResponseEntity<>(
         mapper.convertValue(available, new TypeReference<List<UserDTO>>() {}),
         HttpStatus.OK

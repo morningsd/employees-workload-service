@@ -1,6 +1,6 @@
 package edu.demian.jobs;
 
-import edu.demian.dto.reports.EmployeesProjectOccupation;
+import edu.demian.dto.reports.EmployeesProjectReportDTO;
 import edu.demian.exceptions.ExcelReportGenerationException;
 import edu.demian.services.ReportsService;
 import java.io.File;
@@ -30,11 +30,13 @@ public class EmployeesExcelReportsJob {
 
   private static final String SHEET_NAME = "Employees workload with occupation";
 
-  private static final String[] COLUMNS = {"full_name", "department", "project", "occupation"};
+  private static final String[] WORKLOAD_COLUMNS = {"full_name", "department", "project", "occupation"};
+  private static final String[] AVAILABLE_COLUMNS = {"full_name", "department", "project", "position_end_date"};
 
   private final List<AutoCloseable> resources = new ArrayList<>();
 
-  public static File currentReportFile;
+  public static File currentReportFileEmployeesWorkload;
+  public static File currentReportFileEmployeesAvailable;
 
   private final ReportsService reportsService;
 
@@ -43,17 +45,37 @@ public class EmployeesExcelReportsJob {
   }
 
   @Scheduled(cron = "*/30 * * * * *")
-  public void getDataForEmployeesWorkloadByDepartmentOnMonthlyBasis() {
-    System.out.println("Hello, world");
-    List<EmployeesProjectOccupation> data =
-        reportsService.getDataForEmployeesWorkloadByDepartmentOnMonthlyBasis();
+  public void createExcelReportEmployeesAvailable() {
+    System.out.println("START2");
+    List<EmployeesProjectReportDTO> dataEmployeesAvailable =
+        reportsService.getDataForEmployeesAvailableWithinNext30Days();
+
     try {
-      Workbook workbook = initWorkbook();
-      Sheet sheet = initSheet(workbook);
-      fillWorkbookWithData(data, workbook, sheet);
+      Workbook workbookEmployeesAvailable = initWorkbook();
+      Sheet sheet = initSheet(workbookEmployeesAvailable, AVAILABLE_COLUMNS);
+      fillAvailableWorkbookWithData(dataEmployeesAvailable, workbookEmployeesAvailable, sheet);
     } catch (IOException e) {
       throw new ExcelReportGenerationException(
-          "Can't create excel file to generate report --" + new Date());
+          "Can't create excel file to generate report[employees-available] --" + new Date());
+    }
+    closeResources();
+    System.out.println("END2");
+  }
+
+
+  @Scheduled(cron = "*/30 * * * * *")
+  public void createExcelReportEmployeesWorkload() {
+    System.out.println("START");
+    List<EmployeesProjectReportDTO> dataEmployeesWorkload =
+        reportsService.getDataForEmployeesWorkloadByDepartmentOnMonthlyBasis();
+
+    try {
+      Workbook workbookEmployeesWorkload = initWorkbook();
+      Sheet sheet = initSheet(workbookEmployeesWorkload, WORKLOAD_COLUMNS);
+      fillWorkloadWorkbookWithData(dataEmployeesWorkload, workbookEmployeesWorkload, sheet);
+    } catch (IOException e) {
+      throw new ExcelReportGenerationException(
+          "Can't create excel file to generate report[employees-workload] --" + new Date());
     }
     closeResources();
     System.out.println("END");
@@ -65,58 +87,85 @@ public class EmployeesExcelReportsJob {
     return workbook;
   }
 
-  private Sheet initSheet(Workbook workbook) {
+  private Sheet initSheet(Workbook workbook, String[] columns) {
     Sheet sheet = workbook.createSheet(SHEET_NAME);
 
-    for (int i = 0; i < COLUMNS.length; i++) {
+    for (int i = 0; i < columns.length; i++) {
       sheet.setColumnWidth(i, 4000);
     }
 
     Row header = sheet.createRow(HEADER_ROW_NUMBER);
-    createHeader(header);
+    createHeader(header, columns);
 
     return sheet;
   }
 
-  private static void createHeader(Row header) {
-    for (int i = 0; i < COLUMNS.length; i++) {
+  private static void createHeader(Row header, String[] columns) {
+    for (int i = 0; i < columns.length; i++) {
       Cell headerCell = header.createCell(i);
-      headerCell.setCellValue(COLUMNS[i]);
+      headerCell.setCellValue(columns[i]);
     }
   }
 
-  private void fillWorkbookWithData(
-      List<? extends EmployeesProjectOccupation> data, Workbook workbook, Sheet sheet)
+  private void fillAvailableWorkbookWithData(
+      final List<? extends EmployeesProjectReportDTO> data, final Workbook workbook,
+      final Sheet sheet)
       throws IOException {
     int rowNumber = data.size() + DATA_START_ROW_NUMBER;
     Row row;
-    int ctr = 0;
     for (int rowCtr = DATA_START_ROW_NUMBER; rowCtr < rowNumber; rowCtr++) {
-      EmployeesProjectOccupation emp = data.get(rowCtr - DATA_START_ROW_NUMBER);
+      EmployeesProjectReportDTO emp = data.get(rowCtr - DATA_START_ROW_NUMBER);
       row = sheet.createRow(rowCtr);
-
-
-      ctr = createNewCell(row, ctr, emp.getFirstName() + " " + emp.getLastName());
-      ctr = createNewCell(row, ctr, emp.getDepartmentName());
-      ctr = createNewCell(row, ctr, emp.getProjectName());
-      ctr = createNewCell(row, ctr, String.valueOf(emp.getOccupation()));
-
-      ctr = 0;
+      fillRowWithAvailableData(row, emp);
     }
 
+    writeWorkbookToFile(workbook, currentReportFileEmployeesAvailable);
+  }
+
+  private void fillWorkloadWorkbookWithData(
+      final List<? extends EmployeesProjectReportDTO> data, final Workbook workbook,
+      final Sheet sheet)
+      throws IOException {
+    int rowNumber = data.size() + DATA_START_ROW_NUMBER;
+    Row row;
+    for (int rowCtr = DATA_START_ROW_NUMBER; rowCtr < rowNumber; rowCtr++) {
+      EmployeesProjectReportDTO emp = data.get(rowCtr - DATA_START_ROW_NUMBER);
+      row = sheet.createRow(rowCtr);
+      fillRowWithWorkloadData(row, emp);
+    }
+
+    writeWorkbookToFile(workbook, currentReportFileEmployeesWorkload);
+  }
+
+  private void fillRowWithAvailableData(Row row, EmployeesProjectReportDTO emp) {
+    int ctr = 0;
+    createNewCell(row, ctr++, emp.getFirstName() + " " + emp.getLastName());
+    createNewCell(row, ctr++, emp.getDepartmentName());
+    createNewCell(row, ctr++, emp.getProjectName());
+    createNewCell(row, ctr, emp.getPositionEndDate().toString());
+  }
+
+  private void fillRowWithWorkloadData(Row row, EmployeesProjectReportDTO emp) {
+    int ctr = 0;
+    createNewCell(row, ctr++, emp.getFirstName() + " " + emp.getLastName());
+    createNewCell(row, ctr++, emp.getDepartmentName());
+    createNewCell(row, ctr++, emp.getProjectName());
+    createNewCell(row, ctr, String.valueOf(emp.getOccupation()));
+  }
+
+  private void writeWorkbookToFile(Workbook workbook, File file) throws IOException {
     String fileName = UUID.randomUUID().toString();
 
-    currentReportFile = new File(fileName + XLSX_EXTENSION);
+    file = new File(fileName + XLSX_EXTENSION);
 
-    FileOutputStream outputStream = new FileOutputStream(currentReportFile);
+    FileOutputStream outputStream = new FileOutputStream(file);
     resources.add(outputStream);
     workbook.write(outputStream);
   }
 
-  private int createNewCell(Row row, int ctr, String data) {
-    Cell cell = row.createCell(ctr++);
+  private void createNewCell(Row row, int ctr, String data) {
+    Cell cell = row.createCell(ctr);
     cell.setCellValue(data);
-    return ctr;
   }
 
   private void closeResources() {
